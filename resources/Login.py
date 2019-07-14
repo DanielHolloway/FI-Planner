@@ -1,0 +1,87 @@
+from flask import request
+from flask_restful import Resource
+from Model import db, Login, LoginSchema, User
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user
+
+logins_schema = LoginSchema(many=True)
+login_schema = LoginSchema()
+
+class LoginResource(Resource):
+    def get(self):
+        logins = Login.query.all()
+        logins = logins_schema.dump(logins).data
+        return {'status': 'success', 'data': logins}, 200
+
+    def post(self):
+        json_data = request.get_json(force=True)
+        if not json_data:
+               return {'message': 'No input data provided'}, 400
+        # Validate and deserialize input
+        data, errors = login_schema.load(json_data)
+        if errors:
+            return errors, 422
+        user_id = User.query.filter_by(user_name=data['user_name']).first()
+        # print("ID is",user_id.id)
+        login = Login.query.filter_by(related_user_id=user_id.id).first()
+        if login:
+            if check_password_hash(login.password_hash, json_data['password_hash']):
+                login_user(login, remember=True)
+                print("Called Flask-Login!")
+                return {'message': 'Login successful'}, 201
+            else:
+                return {'message': 'The username or password is incorrect'}, 400
+
+    # create password
+    #    self.password_hash = generate_password_hash(password, method='pbkdf2:sha512')
+
+    # def check_password(self, password):
+    #    return check_password_hash(self.password_hash, password)
+
+        login = Login(
+            related_user_id=json_data['related_user_id'],
+            user_name=json_data['user_name'],
+            password_hash=generate_password_hash(json_data['password_hash'], method='pbkdf2:sha512')
+            )
+
+        db.session.add(login)
+        db.session.commit()
+
+        result = login_schema.dump(login).data
+
+        return { "status": 'success', 'data': result }, 201
+
+    def put(self):
+        json_data = request.get_json(force=True)
+        if not json_data:
+               return {'message': 'No input data provided'}, 400
+        # Validate and deserialize input
+        data, errors = login_schema.load(json_data)
+        if errors:
+            return errors, 422
+        login = Login.query.filter_by(id=data['id']).first()
+        if not login:
+            return {'message': 'Login does not exist'}, 400
+        login.related_user_id = data['related_user_id']
+        login.user_name = data['user_name']
+        login.password_hash = data['password_hash']
+        db.session.commit()
+
+        result = login_schema.dump(login).data
+
+        return { "status": 'success', 'data': result }, 204
+
+    def delete(self):
+        json_data = request.get_json(force=True)
+        if not json_data:
+               return {'message': 'No input data provided'}, 400
+        # Validate and deserialize input
+        data, errors = login_schema.load(json_data)
+        if errors:
+            return errors, 422
+        login = Login.query.filter_by(id=data['id']).delete()
+        db.session.commit()
+
+        result = login_schema.dump(login).data
+
+        return { "status": 'success', 'data': result}, 204

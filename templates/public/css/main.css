@@ -1,0 +1,179 @@
+/* * {
+    border-radius: 0 !important;
+} */
+* {
+    font-family: 'Oxygen', sans-serif;
+}
+html {
+    box-sizing: border-box;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    overflow: hidden;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+body {
+    margin: 0;
+    /*font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+}
+body, html {
+    height: 100%;
+}
+h1, h2, h3, h4, h5, h6, p, ul {
+    margin: 0;
+    padding: 0;
+}
+h3.customFont {
+    font-family: 'Oxygen', sans-serif;
+}
+.header-page {
+    overflow: hidden;
+    padding: 20px 10px;
+    text-align: center;
+    line-height: 25px;
+    color: black;
+    font-size:40px;
+}
+.header{
+    color:black;
+    text-align: center;
+    font-size:40px;
+    background-color: #f1f1f1;
+}
+.logo{
+    width:40px;
+    height: 30px;
+    clear:right;
+}
+.author{
+    color:#808080;
+}
+.bg, .bg-journal { 
+    
+    /* Full height */
+    height: 100%; 
+    
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.bg {
+    /* The image used */
+    background-image: 
+    linear-gradient(
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+    ),
+    url("../../public/images/backer.jpg");
+}
+.bg-journal {
+    /* The image used */
+    background-image: 
+    linear-gradient(
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+    ),
+    url("../../public/images/backer-journal.jpg");
+    filter: blur(4px);
+    -webkit-filter: blur(4px);
+    top: 0;
+    object-fit: cover;
+    width: 100%;
+    transform: scale(1.1);
+}
+.flex-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.flex-container-h {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+.flex-even {
+    justify-content: space-evenly;
+}
+.flex-end {
+    justify-content: flex-end;
+}
+.flex-center {
+    justify-content: center;
+}
+.flex-center-column {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.flex-center-space {
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.flex-bottom-right {
+    display: flex;
+    justify-content: flex-end;
+}
+.transparent-backer {
+    background-color: rgba(245, 245, 245, 0.4);
+}
+.unsplash-high {
+    background-color:black;
+    color:white;
+    text-decoration:none;
+    padding:4px 6px;
+    font-family:-apple-system, BlinkMacSystemFont, San Francisco, Helvetica Neue, Helvetica, Ubuntu, Roboto, Noto, Segoe UI, Arial, sans-serif;
+    font-size:12px;
+    font-weight:bold;
+    line-height:1.2;
+    display:inline-block;
+    border-radius:3px;
+}
+.unsplash-mid {
+    display:inline-block;
+    padding:2px 3px;
+}
+.unsplash-low {
+    height:12px;
+    width:auto;
+    position:relative;
+    vertical-align:middle;
+    top:-2px;fill:white;
+}
+.h-95 {
+    height: 95%;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.skyback {
+    background-color: deepskyblue !important;
+}
+.f-85 {
+    font-size: .85rem;
+}
+.f-24 {
+    font-size: 2.4rem;
+}
+.f-2 {
+    font-size: 2rem;
+}
+.f-16 {
+    font-size: 1.6rem
+}
+.glow {
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+}
+.icon {
+    width: 16px;
+    height: 16px;
+}
+.mt-1r {
+    margin-top: 1rem;
+}
