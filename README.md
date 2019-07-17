@@ -1,11 +1,23 @@
 Always use "npm install" in the same directory as package.json, which is in templates/static/ for this project
 
+When starting on a fresh computer, go to static directory and just run "npm install". It'll get all the npm packages used by "npm run watch"
+
 How to set up the first virtual env:
 py -m pip install --upgrade pip
 if you haven't done this once yet: py -m pip install --user virtualenv
 py -m venv env
 .\env\Scripts\activate
 to leave: deactivate
+
+venv in Ubuntu:
+sudo apt-get install python3-pip
+sudo pip3 install virtualenv 
+virtualenv venv 
+source venv/bin/activate
+deactivate
+
+To run Flask: use python3 run.py
+
 
 To re-enter the virtual Python environment: .\env\Scripts\activate
 .\static> npm run watch (or npm run build)

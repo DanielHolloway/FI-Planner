@@ -20,6 +20,9 @@ coverage
 # nyc test coverage
 .nyc_output
 
+#webpack bundle
+bundle.js
+
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
