@@ -16,7 +16,7 @@ virtualenv venv
 source venv/bin/activate
 deactivate
 
-To run Flask: use python3 run.py
+To run Flask in Ubuntu: use python3 run.py
 
 
 To re-enter the virtual Python environment: .\env\Scripts\activate
