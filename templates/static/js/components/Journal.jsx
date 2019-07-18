@@ -16,6 +16,7 @@ export default class Journal extends Component {
         };
         this.submitEntry = this.submitEntry.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        //console.log(curUser);
     }
 
     handleInputChange(event) {

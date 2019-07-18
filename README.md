@@ -24,6 +24,9 @@ To re-enter the virtual Python environment: .\env\Scripts\activate
 In root, do: py run.py
 http://127.0.0.1:5000/#/journal
 
+Updating pip requirements:
+pip freeze > requirements.txt
+
 Setting up a sqlite db for the first time after making db Model:
 >>> from bookmanager import db
 >>> db.create_all()
@@ -70,12 +73,13 @@ Full auth tutorial with flask-login: https://scotch.io/tutorials/authentication-
 HTTPS: https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
     C:\Program Files\Git\usr\bin\openssl.exe req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
 
+Using Redux for user sessions (JWT instead of cookies): https://jasonwatmore.com/post/2017/12/07/react-redux-jwt-authentication-tutorial-example
 
 To-do list:
     Mobile responsiveness
-    Host on github
+    Host on github - done on 7/15
     API authentication
-    User authentication
+    User authentication - started on 7/10
     Hosted on AWS
     Journal page
         Got the Entry table updating automatically on 7/6

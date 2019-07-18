@@ -37,11 +37,16 @@
   "dependencies": {
     "@primer/octicons-react": "^9.1.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
     "bootstrap": "^4.3.1",
+    "fetch-intercept": "^2.3.1",
     "history": "^4.9.0",
     "jquery": "^3.4.1",
     "popper.js": "^1.15.0",
+    "react-redux": "^7.1.0",
     "react-router-dom": "^5.0.1",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
     "semantic-ui-react": "^0.87.1"
   }
 }
