@@ -30,9 +30,9 @@ export default class ThemeSwitcher extends Component {
                 
                 <div className="btn-group">
                 
-                    <button type="button" onClick={this.resetTheme} className={`btn btn-${themeClass} btn-lg`}>{ theme || 'Choose' } Theme</button>
+                    <button type="button" onClick={this.resetTheme} className={'btn btn-${themeClass} btn-lg'}>{ theme || 'Choose' } Theme</button>
                     
-                    <button type="button" className={`btn btn-${themeClass} btn-lg dropdown-toggle dropdown-toggle-split`} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" className={'btn btn-${themeClass} btn-lg dropdown-toggle dropdown-toggle-split'} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span className="sr-only">Toggle Theme Dropdown</span>
                     </button>
                     

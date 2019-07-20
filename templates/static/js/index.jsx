@@ -6,20 +6,20 @@ import Popper from 'popper.js';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-//import './index.css';
 
-import Routes from "./Routes";
-import configureStore from './store/configureStore';
-import { fetchInterceptor } from './utils/fetchInterceptor';
 
-const interceptor = fetchInterceptor();
-const store = configureStore();
+import { store } from './helpers';
+import { App } from './App';
 
-const jsx = (
+// setup fake backend
+//import { configureFakeBackend } from './helpers';
+//configureFakeBackend();
+
+render(
     <Provider store={store}>
-        <Routes />
-    </Provider>
+        <App />
+    </Provider>,
+    document.getElementById('content')
 );
-
-ReactDOM.render(jsx, document.getElementById("content"));

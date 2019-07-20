@@ -16,7 +16,7 @@ virtualenv venv
 source venv/bin/activate
 deactivate
 
-To run Flask in Ubuntu: use python3 run.py
+To run Flask in Ubuntu: python3 run.py
 
 
 To re-enter the virtual Python environment: .\env\Scripts\activate
@@ -26,6 +26,9 @@ http://127.0.0.1:5000/#/journal
 
 Updating pip requirements:
 pip freeze > requirements.txt
+
+To use requirements.txt:
+pip install -r requirements.txt
 
 Setting up a sqlite db for the first time after making db Model:
 >>> from bookmanager import db
