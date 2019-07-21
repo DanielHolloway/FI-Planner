@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import EntryTable from './EntryTable';
 import EntryForm from './EntryForm';
 import articleData from '../articleData'
 import Header from './Header';
 import PhotoCred from './PhotoCred';
-export default class Journal extends Component {
+
+import { userActions } from '../actions';
+
+console.log("in Journal jsx");
+
+class Journal extends Component {
     constructor() {
         super();
         this.state = {
@@ -16,6 +24,8 @@ export default class Journal extends Component {
         };
         this.submitEntry = this.submitEntry.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+
+        console.log("in Journal jsx deeper");
         //console.log(curUser);
     }
 
@@ -125,3 +135,18 @@ export default class Journal extends Component {
         )
     }
 }
+
+function mapStateToProps(state) {
+    const { users, authentication } = state;
+    const { user } = authentication;
+    var logFlag = state.authentication.loggedIn;
+    console.log("SKRRT, SKRRT",user,logFlag,state.authentication.loggedIn,state);
+    return {
+        user,
+        users,
+        logFlag
+    };
+}
+
+const connectedJournal = connect(mapStateToProps)(Journal);
+export { connectedJournal as Journal };

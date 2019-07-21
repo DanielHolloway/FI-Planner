@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+
  export default class Header extends Component {
   render() {
     return (
       <div className='header-page w-100'>
         <nav className="navbar navbar-expand-lg navbar-dark">
-          <a className="navbar-brand f-24 flex-container-h" href="#">
+          <NavLink className="inactive text-white navbar-brand f-24 flex-container-h" activeClassName="active text-white" to="/">
             <img src="/public/images/snow-notes.png" width="35" height="35" className="mr-3" alt="" />
             FI Planner
-          </a>
+          </NavLink>
+          {/*<a className="navbar-brand f-24 flex-container-h" href="#">
+            <img src="/public/images/snow-notes.png" width="35" height="35" className="mr-3" alt="" />
+            FI Planner
+          </a>*/}
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>

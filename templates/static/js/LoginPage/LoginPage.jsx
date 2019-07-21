@@ -8,6 +8,8 @@ class LoginPage extends React.Component {
     constructor(props) {
         super(props);
 
+        console.log('in LoginPage constructor');
+
         // reset login status
         this.props.dispatch(userActions.logout());
 

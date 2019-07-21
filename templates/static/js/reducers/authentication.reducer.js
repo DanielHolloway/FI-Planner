@@ -1,6 +1,13 @@
 import { userConstants } from '../constants';
 
-let user = JSON.parse(localStorage.getItem('user'));
+let user = {};
+try{
+    user = JSON.parse(localStorage.getItem('user'));
+}
+catch (e){
+    console.log("exception: ",e);
+}
+
 const initialState = user ? { loggedIn: true, user } : {};
 
 export function authentication(state = initialState, action) {
