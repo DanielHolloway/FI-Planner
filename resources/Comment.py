@@ -1,16 +1,20 @@
 from flask import jsonify, request
 from flask_restful import Resource
 from Model import db, Comment, Entry, CommentSchema
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                jwt_required, jwt_refresh_token_required, get_jwt_identity)
 
 comments_schema = CommentSchema(many=True)
 comment_schema = CommentSchema()
 
 class CommentResource(Resource):
+    @jwt_required
     def get(self):
         comments = Comment.query.all()
         comments = comments_schema.dump(comments).data
         return {"status":"success", "data":comments}, 200
 
+    @jwt_required
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:

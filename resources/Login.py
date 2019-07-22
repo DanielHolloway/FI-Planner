@@ -4,7 +4,7 @@ from Model import db, Login, LoginSchema, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 from flask_jwt_extended import (create_access_token, create_refresh_token, 
-jwt_required, jwt_refresh_token_required, get_jwt_identity)
+                                jwt_required, jwt_refresh_token_required, get_jwt_identity)
 import json
 # from app import jwt
 

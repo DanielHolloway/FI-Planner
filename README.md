@@ -78,6 +78,8 @@ HTTPS: https://blog.miguelgrinberg.com/post/running-your-flask-application-over-
 
 Using Redux for user sessions (JWT instead of cookies): https://jasonwatmore.com/post/2017/12/07/react-redux-jwt-authentication-tutorial-example
 
+Flask JWT tutorial: https://medium.com/@riken.mehta/full-stack-tutorial-3-flask-jwt-e759d2ee5727
+
 To-do list:
     Mobile responsiveness
     Host on github - done on 7/15

@@ -1,16 +1,20 @@
 from flask import request
 from flask_restful import Resource
 from Model import db, Category, CategorySchema
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                jwt_required, jwt_refresh_token_required, get_jwt_identity)
 
 categories_schema = CategorySchema(many=True)
 category_schema = CategorySchema()
 
 class CategoryResource(Resource):
+    @jwt_required
     def get(self):
         categories = Category.query.all()
         categories = categories_schema.dump(categories).data
         return {'status': 'success', 'data': categories}, 200
 
+    @jwt_required
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -33,6 +37,7 @@ class CategoryResource(Resource):
 
         return { "status": 'success', 'data': result }, 201
 
+    @jwt_required
     def put(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -51,6 +56,7 @@ class CategoryResource(Resource):
 
         return { "status": 'success', 'data': result }, 204
 
+    @jwt_required
     def delete(self):
         json_data = request.get_json(force=True)
         if not json_data:

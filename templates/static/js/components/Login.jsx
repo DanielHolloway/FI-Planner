@@ -56,6 +56,7 @@ export default class Login extends Component {
    render() {
       return (
         <div className="w-25 mt-1">
+            <div className="text-white">Hi { this.props.user.first_name + " " + this.props.user.last_name }</div>
             <form className="text-white d-flex flex-row flex-even align-items-center">
                 <div className="form-group">
                     <label htmlFor="inputUsername">Username</label>

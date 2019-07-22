@@ -8,6 +8,8 @@ import articleData from '../articleData'
 import Header from './Header';
 import PhotoCred from './PhotoCred';
 
+import { authHeader } from '../helpers';
+
 import { userActions } from '../actions';
 
 console.log("in Journal jsx");
@@ -42,12 +44,12 @@ class Journal extends Component {
         e.preventDefault();
         //hard-coded the related_user_id until I develop user authentication
         console.log("posting this!",this.state);
+        var postHeader = authHeader();
+        postHeader['Accept'] = 'application/json';
+        postHeader['Content-Type'] = 'application/json';
         fetch('http://127.0.0.1:5000/api/Entry', {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
+            headers: postHeader,
             body: JSON.stringify({
                 name: this.state.entryName,
                 category: this.state.entryCategory,
@@ -77,7 +79,10 @@ class Journal extends Component {
     }
 
     getEntries() {
-        fetch('http://127.0.0.1:5000/api/Entry')
+        fetch('http://127.0.0.1:5000/api/Entry', {
+            method: 'GET',
+            headers: authHeader()
+        })
         .then(results => {
             return results.json();
         }).then(data => {
