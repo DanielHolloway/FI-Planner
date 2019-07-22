@@ -83,8 +83,13 @@ Flask JWT tutorial: https://medium.com/@riken.mehta/full-stack-tutorial-3-flask-
 To-do list:
     Mobile responsiveness
     Host on github - done on 7/15
-    API authentication
-    User authentication - started on 7/10
+    API authentication - done on 7/21
+    User authentication - started on 7/10, done on 7/21
+    Figure out checklist for deployment:
+        HTTPS
+        User/API auth and protection
+        DB encryption?
+        What else? Check with OWASP and DWVA
     Hosted on AWS
     Journal page
         Got the Entry table updating automatically on 7/6
