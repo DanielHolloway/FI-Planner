@@ -8,7 +8,8 @@ users_schema = UserSchema(many=True)
 user_schema = UserSchema()
 
 class UserResource(Resource):
-    @jwt_required
+    #removed jwt gate so that Redux works
+    # @jwt_required
     def get(self):
         users = User.query.all()
         users = users_schema.dump(users).data

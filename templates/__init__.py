@@ -11,8 +11,8 @@ def create_app(config_filename):
      static_folder = './public',
      template_folder="./static")
 
-    app.config['SECRET_KEY'] = '9OLWxND4o69j4K4iuopO'
-    app.config['JWT_SECRET_KEY'] = '9OLWxND4o69j4K4iuopO' #fix later: os.environ.get('SECRET')
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+    app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
 
     app.config['SQLALCHEMY_ECHO'] = False
