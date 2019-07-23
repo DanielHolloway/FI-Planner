@@ -8,11 +8,13 @@ accounts_schema = AccountSchema(many=True)
 account_schema = AccountSchema()
 
 class AccountResource(Resource):
+    @jwt_required
     def get(self):
         accounts = Account.query.all()
         accounts = accounts_schema.dump(accounts).data
         return {'status': 'success', 'data': accounts}, 200
 
+    @jwt_required
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -36,6 +38,7 @@ class AccountResource(Resource):
 
         return { "status": 'success', 'data': result }, 201
 
+    @jwt_required
     def put(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -55,6 +58,7 @@ class AccountResource(Resource):
 
         return { "status": 'success', 'data': result }, 204
 
+    @jwt_required
     def delete(self):
         json_data = request.get_json(force=True)
         if not json_data:

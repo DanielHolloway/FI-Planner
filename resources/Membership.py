@@ -8,11 +8,13 @@ memberships_schema = MembershipSchema(many=True)
 membership_schema = MembershipSchema()
 
 class MembershipResource(Resource):
+    @jwt_required
     def get(self):
         memberships = Membership.query.all()
         memberships = memberships_schema.dump(memberships).data
         return {'status': 'success', 'data': memberships}, 200
 
+    @jwt_required
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -39,6 +41,7 @@ class MembershipResource(Resource):
 
         return { "status": 'success', 'data': result }, 201
 
+    @jwt_required
     def put(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -61,6 +64,7 @@ class MembershipResource(Resource):
 
         return { "status": 'success', 'data': result }, 204
 
+    @jwt_required
     def delete(self):
         json_data = request.get_json(force=True)
         if not json_data:

@@ -8,11 +8,13 @@ users_schema = UserSchema(many=True)
 user_schema = UserSchema()
 
 class UserResource(Resource):
+    @jwt_required
     def get(self):
         users = User.query.all()
         users = users_schema.dump(users).data
         return {'status': 'success', 'data': users}, 200
 
+    @jwt_required
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -37,6 +39,7 @@ class UserResource(Resource):
 
         return { "status": 'success', 'data': result }, 201
 
+    @jwt_required
     def put(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -57,6 +60,7 @@ class UserResource(Resource):
 
         return { "status": 'success', 'data': result }, 204
 
+    @jwt_required
     def delete(self):
         json_data = request.get_json(force=True)
         if not json_data:

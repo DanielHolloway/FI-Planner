@@ -86,8 +86,33 @@ To-do list:
     API authentication - done on 7/21
     User authentication - started on 7/10, done on 7/21
     Figure out checklist for deployment:
-        HTTPS
-        User/API auth and protection
+        0. Reference: https://martinfowler.com/articles/web-security-basics.html
+        1. User/API auth and protection - JWT done on 7/21, need to cascade
+            How to authenticate user logins before successful password check?
+        2. HTTPS - implementation started, but slow on localhost
+            use gunicorn and nginx
+            get certificate from CA
+            config: https://mozilla.github.io/server-side-tls/ssl-config-generator/
+            check your config periodically: https://www.ssllabs.com/ssltest/
+            re-direct HTTP to HTTPS
+            send HSTS headers to users' browsers (make sure that HTTPS is set up first on all pages)
+        3. Input validation
+            React
+            Flask?
+        4. Output encoding (for HTML outputs)
+            React
+        5. Parameter binding - done on 7/7
+            Flask - handled by SQLAlchemy functions
+        6. Hash and salt passwords
+            12-100 alpha-numeric and symbolic
+            tell users good habits to use when making password
+        7. User authentication
+            Prevent brute force attacks - maybe use a captcha after two failed and lock the account temporarily after 2 more?
+        8. Session Management
+            Look into safe session management for JWT's (article only talked about cookies)
+        9. Authorize Actions
+            Based on a user's role, map the correct permissions "upstream". Called Role Based Access Control (RBAC)
+            To ensure consistent user auth, set Cache-Control header to "private, no-cache, no-store"
         DB encryption?
         What else? Check with OWASP and DWVA
     Hosted on AWS

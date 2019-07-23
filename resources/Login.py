@@ -12,10 +12,11 @@ logins_schema = LoginSchema(many=True)
 login_schema = LoginSchema()
 
 class LoginResource(Resource):
-    def get(self):
-        logins = Login.query.all()
-        logins = logins_schema.dump(logins).data
-        return {'status': 'success', 'data': logins}, 200
+    # We probably don't need to query all logins using an API
+    # def get(self):
+    #     logins = Login.query.all()
+    #     logins = logins_schema.dump(logins).data
+    #     return {'status': 'success', 'data': logins}, 200
 
     def post(self):
         json_data = request.get_json(force=True)
@@ -56,7 +57,7 @@ class LoginResource(Resource):
         login = Login(
             related_user_id=json_data['related_user_id'],
             user_name=json_data['user_name'],
-            password_hash=generate_password_hash(json_data['password_hash'], method='pbkdf2:sha512')
+            password_hash=generate_password_hash(json_data['password_hash'], method='pbkdf2:sha512:100001')
             )
 
         db.session.add(login)
@@ -66,6 +67,7 @@ class LoginResource(Resource):
 
         return { "status": 'success', 'data': result }, 201
 
+    @jwt_required
     def put(self):
         json_data = request.get_json(force=True)
         if not json_data:
@@ -86,6 +88,7 @@ class LoginResource(Resource):
 
         return { "status": 'success', 'data': result }, 204
 
+    @jwt_required
     def delete(self):
         json_data = request.get_json(force=True)
         if not json_data:
