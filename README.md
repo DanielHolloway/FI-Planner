@@ -35,6 +35,8 @@ Setting up a sqlite db for the first time after making db Model:
 >>> db.create_all()
 >>> exit()
 
+.env file should be in top level of file structure
+
 Operating on a sqlite db from PowerShell
     PS C:\Users\Dino.Rawr\Desktop\DH\Coding\FirstProject> .\env\Scripts\activate
     (env) PS C:\Users\Dino.Rawr\Desktop\DH\Coding\FirstProject> py
