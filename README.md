@@ -83,10 +83,24 @@ Using Redux for user sessions (JWT instead of cookies): https://jasonwatmore.com
 Flask JWT tutorial: https://medium.com/@riken.mehta/full-stack-tutorial-3-flask-jwt-e759d2ee5727
 
 To-do list:
-    Mobile responsiveness
+    ### DONE ###
     Host on github - done on 7/15
     API authentication - done on 7/21
     User authentication - started on 7/10, done on 7/21
+    Journal page
+        Got the Entry table updating automatically on 7/6
+    Re-structure database - done on 7/6
+        Have these 7 tables: Comment, Category, User, Login, Membership, Account, Entry
+        Flask Migrate not working on sqlite3 tho :(
+    Re-structure API's - done on 7/7
+        Added for Entry and User on 7/6
+        Comment, Category, User, Login, Membership, Account, Entry done on 7/7
+
+    ### BUGS ###
+    Old JWT's cause "UNPROCESSABLE ENTITY" when hitting "GET api/Entry". Need to fix old JWT's: use refresher token and refresh the old ones
+
+    ### FEATURES ###
+    Mobile responsiveness
     Figure out checklist for deployment:
         0. Reference: https://martinfowler.com/articles/web-security-basics.html
         1. User/API auth and protection - JWT done on 7/21, need to cascade
@@ -118,12 +132,4 @@ To-do list:
         DB encryption?
         What else? Check with OWASP and DWVA
     Hosted on AWS
-    Journal page
-        Got the Entry table updating automatically on 7/6
     Metrics page
-    Re-structure database - done on 7/6
-        Have these 7 tables: Comment, Category, User, Login, Membership, Account, Entry
-        Flask Migrate not working on sqlite3 tho :(
-    Re-structure API's - done on 7/7
-        Added for Entry and User on 7/6
-        Comment, Category, User, Login, Membership, Account, Entry done on 7/7

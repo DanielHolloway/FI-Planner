@@ -1,5 +1,5 @@
 from flask import Flask
-from marshmallow import Schema, fields, pre_load, validate
+from marshmallow import Schema, fields, pre_load, validate, validates, ValidationError
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -116,6 +116,11 @@ class EntrySchema(ma.Schema):
     month = fields.String(required=True)
     amount = fields.Integer(required=True)
     related_user_id = fields.Integer(required=True)
+
+    @validates("name")
+    def validate_name(self, value):
+        if not value:
+            raise ValidationError("Name must not be blank.")
 
 class Comment(db.Model):
     __tablename__ = 'comments'

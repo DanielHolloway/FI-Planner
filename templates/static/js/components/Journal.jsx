@@ -14,15 +14,54 @@ import { userActions } from '../actions';
 
 console.log("in Journal jsx");
 
+const txtFieldState = {
+    valid: true,
+    typeMismatch: false,
+    errMsg: "" //this is where our error message gets across
+};
+
 class Journal extends Component {
     constructor() {
         super();
         this.state = {
             shmeats: [],
-            entryName: '',
-            entryCategory: 'Work',
-            entryMonth: 'May',
-            entryAmount: 0
+            name: {
+                ...txtFieldState,
+                fieldName: "entryName",
+                required: true,
+                requiredTxt: "Name is required",
+                formatErrorTxt: "Incorrect name format",
+                type: "text",
+                value: ''
+            },
+            category: {
+                ...txtFieldState,
+                fieldName: "entryCategory",
+                required: true,
+                requiredTxt: "Name is required",
+                formatErrorTxt: "Incorrect category format",
+                type: "text",
+                value: 'Work'
+            },
+            month: {
+                ...txtFieldState,
+                fieldName: "entryMonth",
+                required: true,
+                requiredTxt: "Month is required",
+                formatErrorTxt: "Incorrect month format",
+                type: "text",
+                value: 'July'
+            },
+            amount: {
+                ...txtFieldState,
+                fieldName: "entryAmount",
+                required: true,
+                requiredTxt: "Amount is required",
+                formatErrorTxt: "Incorrect amount format",
+                type: "number",
+                value: ''
+            },
+            allFieldsValid: false
         };
         this.submitEntry = this.submitEntry.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -40,42 +79,105 @@ class Journal extends Component {
         })
     }
 
+    reduceFormValues = formElements => {
+        const arrElements = Array.prototype.slice.call(formElements); //we convert elements/inputs into an array found inside form element
+    
+        //we need to extract specific properties in Constraint Validation API using this code snippet
+        const formValues = arrElements
+          .filter(elem => elem.name.length > 0)
+          .map(x => {
+            const { typeMismatch } = x.validity;
+            const { name, type, value } = x;
+    
+            return {
+              name,
+              type,
+              typeMismatch, //we use typeMismatch when format is incorrect(e.g. incorrect email)
+              value,
+              valid: x.checkValidity()
+            };
+          })
+          .reduce((acc, currVal) => {
+            //then we finally use reduce, ready to put it in our state
+            const { value, valid, typeMismatch, type } = currVal;
+            console.log(currVal,this.state[currVal.name]);
+            const { fieldName, requiredTxt, formatErrorTxt } = this.state[
+              currVal.name
+            ]; //get the rest of properties inside the state object
+    
+            //we'll need to map these properties back to state so we use reducer...
+            acc[currVal.name] = {
+              value,
+              valid,
+              typeMismatch,
+              fieldName,
+              requiredTxt,
+              formatErrorTxt
+            };
+    
+            return acc;
+          }, {});
+          console.log(formValues);
+        return formValues;
+    };
+
+    checkAllFieldsValid = formValues => {
+      return !Object.keys(formValues)
+        .map(x => formValues[x])
+        .some(field => !field.valid);
+    };
+
+    validateSubmit = (target) => {
+        //we filter out `allFieldsValid` property as this is not included state for our input fields
+        console.log(target);
+        const formValues = this.reduceFormValues(target.elements);
+        const allFieldsValid = this.checkAllFieldsValid(formValues);
+        
+        console.log(allFieldsValid);
+
+        this.setState({ ...formValues, allFieldsValid }); //we set the state based on the extracted values from Constraint Validation API
+        
+    };
+
     submitEntry(e) {
         e.preventDefault();
         //hard-coded the related_user_id until I develop user authentication
+        this.validateSubmit(e.target);
         console.log("posting this!",this.state);
-        var postHeader = authHeader();
-        postHeader['Accept'] = 'application/json';
-        postHeader['Content-Type'] = 'application/json';
-        fetch('http://127.0.0.1:5000/api/Entry', {
-            method: 'POST',
-            headers: postHeader,
-            body: JSON.stringify({
-                name: this.state.entryName,
-                category: this.state.entryCategory,
-                month: this.state.entryMonth,
-                amount: this.state.entryAmount,
-                related_user_id: 1
+        if(this.state.allFieldsValid){
+            var postHeader = authHeader();
+            postHeader['Accept'] = 'application/json';
+            postHeader['Content-Type'] = 'application/json';
+            fetch('http://127.0.0.1:5000/api/Entry', {
+                method: 'POST',
+                headers: postHeader,
+                body: JSON.stringify({
+                    name: this.state.name.value,
+                    category: this.state.category.value,
+                    month: this.state.month.value,
+                    amount: this.state.amount.value,
+                    related_user_id: 1
+                })
             })
-        })
-        .then((response) => {
-            if(!response.ok) throw new Error(response.status);
-            else return response.json();
-        })
-        .then((data) => {
-            console.log("DATA STORED",data);
-            this.state = {
-                entryName: '',
-                entryCategory: 'Work',
-                entryMonth: 'May',
-                entryAmount: 0
-            };
-            this.getEntries();
-        })
-        .catch((error) => {
-            console.log('error: ' + error);
-            //this.setState({ requestFailed: true });
-        });
+            .then((response) => {
+                if(!response.ok) throw new Error(response.status);
+                else return response.json();
+            })
+            .then((data) => {
+                console.log("DATA STORED",data);
+                this.state = {
+                    entryName: '',
+                    entryCategory: 'Work',
+                    entryMonth: 'May',
+                    entryAmount: 0
+                };
+                this.getEntries();
+            })
+            .catch((error) => {
+                console.log('error: ' + error);
+                //this.setState({ requestFailed: true });
+            });
+        }
     }
 
     getEntries() {

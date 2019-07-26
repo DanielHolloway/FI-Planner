@@ -10,6 +10,7 @@ entry_schema = EntrySchema()
 class EntryResource(Resource):
     @jwt_required
     def get(self):
+        print("hit the get")
         entries = Entry.query.all()
         entries = entries_schema.dump(entries).data
         return {'status': 'success', 'data': entries}, 200
