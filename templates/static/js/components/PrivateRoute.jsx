@@ -5,8 +5,7 @@ console.log('in PrivateRoute');
 
 export const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={props => (
-        localStorage.getItem('user') && 
-        function(){ try{ JSON.parse(localStorage.getItem('user')); } catch(e){ return false; } console.log(localStorage.getItem('user')); return true; }
+        localStorage.getItem('user') 
             ? <Component {...props} />
             : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
     )} />  

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { history } from '../helpers';
 import { alertActions } from '../actions';
-import { PrivateRoute, Home, Journal } from '../components';
+import { Home, Journal } from '../components';
 import { HomePage } from '../HomePage';
 import { LoginPage } from '../LoginPage';
 
@@ -27,13 +27,11 @@ class App extends React.Component {
                 {alert.message &&
                     <div className={'alert ${alert.type}'}>{alert.message}</div>
                 }
-                <Router history={history}>
-                    <div>
-                        <PrivateRoute exact path="/" component={Home} />
-                        <Route path="/login" component={LoginPage} />
-                        <Route path="/journal" component={Journal} />
-                    </div>
-                </Router>
+                <div>
+                    <Route exact path="/" component={Home} />
+                    <Route path="/login" component={LoginPage} />
+                    <Route path="/journal" component={Journal} />
+                </div>
             </div>
         );
     }

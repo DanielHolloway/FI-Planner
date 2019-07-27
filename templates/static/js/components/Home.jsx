@@ -39,9 +39,9 @@ class Home extends Component {
                      <h1 className="text-white">FI Planner</h1>
                      <h4 className="text-white">Where the savings are real</h4>
                      <div className="p-2">
-                        {/*<Start history={this.props.history} />*/}
+                        <Start history={this.props.history} />
 
-                        <div className="d-flex flex-wrap justify-content-center align-items-center align-content-center">
+                        {/*<div className="d-flex flex-wrap justify-content-center align-items-center align-content-center">
                            <div className="btn-group">
                               <h2>
                                  <span onClick={this.start} className="badge badge-pill badge-primary cursor-pointer skyback p-3 font-weight-normal">
@@ -49,7 +49,7 @@ class Home extends Component {
                                  </span>
                               </h2>
                            </div>
-                        </div>
+                        </div>*/}
                      </div>
                   </div>
                   <div className="w-100 p-2 flex-bottom-right">

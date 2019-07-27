@@ -12,6 +12,8 @@ import { authHeader } from '../helpers';
 
 import { userActions } from '../actions';
 
+import axios from 'axios';
+
 console.log("in Journal jsx");
 
 const txtFieldState = {
@@ -181,7 +183,7 @@ class Journal extends Component {
     }
 
     getEntries() {
-        fetch('http://127.0.0.1:5000/api/Entry', {
+        axios.get('http://127.0.0.1:5000/api/Entry', {
             method: 'GET',
             headers: authHeader()
         })

@@ -8,18 +8,28 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import { Router, Route } from 'react-router-dom';
 
 
-import { store } from './helpers';
+import { history } from './helpers';
+import configureStore from './helpers/configureStore';
+import httpService from './services/httpService';
 import { App } from './App';
 
 // setup fake backend
 //import { configureFakeBackend } from './helpers';
 //configureFakeBackend();
 
+const store = configureStore({});
+
+// call it afer we create the store and import history and you're good to go!
+httpService.setupInterceptors(store, history);
+
 render(
     <Provider store={store}>
-        <App />
+        <Router history={history}>
+            <App />
+        </Router>
     </Provider>,
     document.getElementById('content')
 );
