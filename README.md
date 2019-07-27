@@ -18,7 +18,6 @@ deactivate
 
 To run Flask in Ubuntu: python3 run.py
 
-
 To re-enter the virtual Python environment: .\env\Scripts\activate
 .\static> npm run watch (or npm run build)
 In root, do: py run.py
@@ -133,6 +132,10 @@ To-do list:
         7. User authentication
             Prevent brute force attacks - maybe use a captcha after two failed and lock the account temporarily after 2 more?
             Memcached - install on dev environments and deployment environment before running server
+                Only works on Linux, run these commands
+                    Restart memcached, change to start/stop as needed: sudo systemctl restart memcached
+                    Check for "memcached" on correct IP: sudo netstat -plunt
+                    Check for specific memcached stats: memcstat --servers="<correct IP>"
         8. Session Management
             Look into safe session management for JWT's (article only talked about cookies)
         9. Authorize Actions

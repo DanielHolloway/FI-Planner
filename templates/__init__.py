@@ -1,10 +1,13 @@
 import os
 import datetime
 from flask import Flask
+from flask import request, abort
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
+
+ip_ban_list = [('127.0.0.0',datetime.datetime.utcnow())]
 
 def create_app(config_filename):
     app = Flask(__name__,
@@ -55,5 +58,16 @@ def create_app(config_filename):
     # register the blueprints
     app.register_blueprint(hello_blueprint)
     app.register_blueprint(medium_blueprint)
+
+
+
+    @app.before_request
+    def block_method():
+        ip = request.environ.get('REMOTE_ADDR')
+        dct = dict(ip_ban_list)
+        val = dct.get(ip)
+        if val is not None:
+            print(val)
+            abort(403)
 
     return app

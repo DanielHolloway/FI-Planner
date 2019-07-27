@@ -38,6 +38,11 @@ class Home extends Component {
    handleSubmit(e) {
       e.preventDefault();
 
+      if(this.state.username == '' || this.state.password == ''){
+         this.setState({ submitted: true });
+         return;
+      }
+
       fetch('http://127.0.0.1:5000/api/Login', {
            method: 'POST',
            headers: {

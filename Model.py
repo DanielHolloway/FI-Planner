@@ -4,6 +4,14 @@ from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from pymemcache.client import base
+from pymemcache import serde
+from templates import ip_ban_list
+
+# Don't forget to run `memcached' before running this next line:
+client = base.Client(('localhost', 11211),
+    serializer=serde.python_memcache_serializer,
+    deserializer=serde.python_memcache_deserializer)
 
 ma = Marshmallow()
 db = SQLAlchemy()

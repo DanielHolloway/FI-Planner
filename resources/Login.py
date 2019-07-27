@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from Model import db, Login, LoginSchema, User
+from Model import db, Login, LoginSchema, User, client
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 from flask_jwt_extended import (create_access_token, create_refresh_token, 
@@ -46,10 +46,22 @@ class LoginResource(Resource):
                     print("Called flask_jwt_extended!")
                     return returnedUser, 201
                 else:
+                    client.set(login, 1)
+                    print(client.get(login))
                     return {'message': 'The username or password is incorrect'}, 400
             else:
+                client.set(user_id, 1)
+                print(client.get(user_id))
                 return {'message': 'The username or password is incorrect'}, 400
         else:
+            count = client.get(data['user_name'])
+            if count is None:
+                count = 0
+            print("count:",count)
+            count += 1
+            print("trying to get:",client.get(data['user_name']))
+            client.set(data['user_name'], count)
+            print(client.get(data['user_name']))
             return {'message': 'The username or password is incorrect'}, 400
 
     # create password
