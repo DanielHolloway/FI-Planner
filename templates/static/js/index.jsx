@@ -23,7 +23,7 @@ import { App } from './App';
 const store = configureStore({});
 
 // call it afer we create the store and import history and you're good to go!
-httpService.setupInterceptors(store, history);
+//httpService.setupInterceptors(store, history);
 
 render(
     <Provider store={store}>

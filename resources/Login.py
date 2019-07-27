@@ -23,6 +23,7 @@ class LoginResource(Resource):
         if not json_data:
                return {'message': 'No input data provided'}, 400
         # Validate and deserialize input
+        print(json_data)
         data, errors = login_schema.load(json_data)
         if errors:
             return errors, 422
@@ -46,6 +47,10 @@ class LoginResource(Resource):
                     return returnedUser, 201
                 else:
                     return {'message': 'The username or password is incorrect'}, 400
+            else:
+                return {'message': 'The username or password is incorrect'}, 400
+        else:
+            return {'message': 'The username or password is incorrect'}, 400
 
     # create password
     #    self.password_hash = generate_password_hash(password, method='pbkdf2:sha512')

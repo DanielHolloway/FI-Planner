@@ -177,3 +177,6 @@ h3.customFont {
 .mt-1r {
     margin-top: 1rem;
 }
+.align-self-flex-end {
+    align-self: flex-end;
+}

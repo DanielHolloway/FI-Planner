@@ -10,10 +10,6 @@ import { Link, NavLink } from 'react-router-dom';
             <img src="/public/images/snow-notes.png" width="35" height="35" className="mr-3" alt="" />
             FI Planner
           </NavLink>
-          {/*<a className="navbar-brand f-24 flex-container-h" href="#">
-            <img src="/public/images/snow-notes.png" width="35" height="35" className="mr-3" alt="" />
-            FI Planner
-          </a>*/}
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { HashRouter, Route, hashHistory } from 'react-router-dom';
 import Home from './components/Home';
 import Journal from './components/Journal';
+import PrivateRoute from './components/PrivateRoute';
 import Login from './components/Login';
 
 // import more components
@@ -14,7 +15,7 @@ export default class Routes extends Component {
             <HashRouter history={hashHistory}>
                 <div>
                     <Route exact path='/' component={Home} />
-                    <Route  path='/journal' component={Journal} />
+                    <PrivateRoute  path='/journal' component={Journal} />
                     <Route  path='/login' component={Login} />
                 </div>
             </HashRouter>

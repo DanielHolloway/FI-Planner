@@ -1,4 +1,4 @@
-Always use "npm install" in the same directory as package.json, which is in templates/static/ for this project
+Always use "npm install --save" in the same directory as package.json, which is in templates/static/ for this project. The "--save" adds it to the package.json for future local repos.
 
 When starting on a fresh computer, go to static directory and just run "npm install". It'll get all the npm packages used by "npm run watch"
 
@@ -24,11 +24,16 @@ To re-enter the virtual Python environment: .\env\Scripts\activate
 In root, do: py run.py
 http://127.0.0.1:5000/#/journal
 
+Installing and updating requirements with pip:
+pip install <package> && pip freeze > requirements.txt
+
 Updating pip requirements:
 pip freeze > requirements.txt
 
 To use requirements.txt:
 pip install -r requirements.txt
+
+Consider using "pipenv" instead of "pip install" in future projects
 
 Setting up a sqlite db for the first time after making db Model:
 >>> from bookmanager import db
@@ -105,6 +110,7 @@ To-do list:
         0. Reference: https://martinfowler.com/articles/web-security-basics.html
         1. User/API auth and protection - JWT done on 7/21, need to cascade
             How to authenticate user logins before successful password check?
+            Locked up all API's and finished initial redirects on 7/26
         2. HTTPS - implementation started, but slow on localhost
             use gunicorn and nginx
             get certificate from CA
@@ -113,10 +119,12 @@ To-do list:
             re-direct HTTP to HTTPS
             send HSTS headers to users' browsers (make sure that HTTPS is set up first on all pages)
         3. Input validation
-            React
-            Flask?
+            React - finished home and journal input validation on 7/26
+            Flask - need to do more validations on API's
         4. Output encoding (for HTML outputs)
-            React
+            React -
+                Don't use dangerouslySetInnerHTML
+                Don't allow user inputs to populate href fields or src fields or props (elements)
         5. Parameter binding - done on 7/7
             Flask - handled by SQLAlchemy functions
         6. Hash and salt passwords
@@ -124,6 +132,7 @@ To-do list:
             tell users good habits to use when making password
         7. User authentication
             Prevent brute force attacks - maybe use a captcha after two failed and lock the account temporarily after 2 more?
+            Memcached - install on dev environments and deployment environment before running server
         8. Session Management
             Look into safe session management for JWT's (article only talked about cookies)
         9. Authorize Actions

@@ -183,7 +183,7 @@ class Journal extends Component {
     }
 
     getEntries() {
-        axios.get('http://127.0.0.1:5000/api/Entry', {
+        fetch('http://127.0.0.1:5000/api/Entry', {
             method: 'GET',
             headers: authHeader()
         })
