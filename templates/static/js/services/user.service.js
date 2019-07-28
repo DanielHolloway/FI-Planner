@@ -32,28 +32,23 @@ function login(username, password) {
         });
 }
 
-function logout(username) {
+function logout() {
     const requestOptions = {
         method: 'POST',
         headers: authHeader(),
         body: JSON.stringify({
-            user_name: username
+            user_name: 'username'
         })
     };
 
-    return fetch('/logout', requestOptions)
+    fetch('/logout', requestOptions)
         .then(function(response) {            
             response.text().then(text => {
                 const data = text && JSON.parse(text);
                 console.log("GOT THIS RESPONSE: ",response,data);
-                if (!response.ok) {        
-                    const error = (data && data.message) || response.statusText;
-                    return Promise.reject(error);
-                }
-                else{
+                if (response.ok) {        
                     // remove user from local storage to log user out
                     localStorage.removeItem('user');
-                    return data;
                 }
 
             });
