@@ -3,8 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Start from './Start';
-import PhotoCred from './PhotoCred';
-import Login from './Login';
+import PhotoCred from '../components/PhotoCred';
 
 import { userActions } from '../actions';
 
@@ -19,7 +18,8 @@ class Home extends Component {
            username: '',
            password: '',
            submitted: false,
-           badLogin: false
+           badLogin: false,
+           lockOut: false
        };
 
        this.handleChange = this.handleChange.bind(this);
@@ -56,12 +56,15 @@ class Home extends Component {
            })
       })
       .then((response) => {
-           if(!response.ok) throw new Error(response.status);
-           else return response.json();
+         if(response.status == 403){
+            this.setState({ lockOut: true });
+         }
+         if(!response.ok) throw new Error(response.status);
+         else return response.json();
       })
       .then((data) => {
          console.log("DATA STORED",data);
-         this.setState({ submitted: true, badLogin: false });
+         this.setState({ submitted: true, badLogin: false, lockOut: false });
          const { username, password } = this.state;
          const { dispatch } = this.props;
          if (username && password) {
@@ -90,7 +93,7 @@ class Home extends Component {
 
    render() {
       const { loggingIn } = this.props;
-      const { username, password, submitted, badLogin } = this.state;
+      const { username, password, submitted, badLogin, lockOut } = this.state;
       const { user, users, logFlag } = this.props;
       return (
          <div>
@@ -113,16 +116,12 @@ class Home extends Component {
                               <div className={'' + (submitted && !username ? ' has-error' : '')}>
                                     <label htmlFor="username">Username</label>
                                     <input type="text" className="form-control" name="username" value={username} onChange={this.handleChange} />
-                                    {submitted && !username &&
-                                       <div className="help-block">Username is required</div>
-                                    }
+                                    
                               </div>
                               <div className={'' + (submitted && !password ? ' has-error' : '')}>
                                     <label htmlFor="password">Password</label>
                                     <input type="password" className="form-control" name="password" value={password} onChange={this.handleChange} />
-                                    {submitted && !password &&
-                                       <div className="help-block">Password is required</div>
-                                    }
+                                    
                               </div>
                               <div className="align-self-flex-end">
                                     <button className="btn btn-primary skyback">Login</button>
@@ -133,8 +132,14 @@ class Home extends Component {
                               
                            </div>
                            <div className="flex-row">
-                              {badLogin && 
+                              {submitted && (!username || !password) &&
+                                 <div className="help-block">Username and password are required</div>
+                              }
+                              {badLogin && !lockOut &&
                                  <div className="help-block">Username or password is invalid.</div>
+                              }
+                              {lockOut &&
+                                 <div className="help-block">You have been temporarily prevented from logging in.</div>
                               }
                            </div>
                         </form>
@@ -146,7 +151,7 @@ class Home extends Component {
                      <h1 className="text-white">FI Planner</h1>
                      <h4 className="text-white">Where the savings are real</h4>
                      <div className="p-2">
-                        <Start history={this.props.history} />
+                        <Start history={this.props.history} logFlag={this.props.logFlag} />
 
                         {/*<div className="d-flex flex-wrap justify-content-center align-items-center align-content-center">
                            <div className="btn-group">

@@ -7,7 +7,7 @@ from pathlib import Path
 from flask_login import LoginManager
 from flask_jwt_extended import JWTManager
 
-ip_ban_list = [('127.0.0.0',datetime.datetime.utcnow())]
+ip_ban_list = []
 
 def create_app(config_filename):
     app = Flask(__name__,
@@ -66,8 +66,11 @@ def create_app(config_filename):
         ip = request.environ.get('REMOTE_ADDR')
         dct = dict(ip_ban_list)
         val = dct.get(ip)
+        #print("val from block check:",val,ip_ban_list)
         if val is not None:
-            print(val)
-            abort(403)
+            present = datetime.datetime.utcnow()
+            if val > present:
+                #print("VALID DATE!!",val,present)
+                abort(403)
 
     return app

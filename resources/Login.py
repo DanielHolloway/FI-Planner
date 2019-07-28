@@ -1,3 +1,5 @@
+import os
+import datetime
 from flask import request
 from flask_restful import Resource
 from Model import db, Login, LoginSchema, User, client
@@ -6,7 +8,7 @@ from flask_login import login_user
 from flask_jwt_extended import (create_access_token, create_refresh_token, 
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
 import json
-# from app import jwt
+from templates import ip_ban_list
 
 logins_schema = LoginSchema(many=True)
 login_schema = LoginSchema()
@@ -29,6 +31,19 @@ class LoginResource(Resource):
             return errors, 422
         print("received this user_name: ",data['user_name'])
         user_id = User.query.filter_by(user_name=data['user_name']).first()
+
+        def checkBanList(key):
+            count = client.get(key)
+            if count is None:
+                count = 0
+            count += 1
+            client.set(key, count)
+            if count >= 3:
+                time_delay = 15 * (2**(count-3))
+                #print("ip: ",key,"datetime: ",datetime.datetime.utcnow()+datetime.timedelta(0,time_delay))
+                ip_ban_list.append((key,datetime.datetime.utcnow()+datetime.timedelta(0,time_delay)))
+
+        ip = request.environ.get('REMOTE_ADDR')
         if user_id:
             # print("ID is",user_id.id)
             login = Login.query.filter_by(related_user_id=user_id.id).first()
@@ -43,25 +58,19 @@ class LoginResource(Resource):
                     returnedUser['first_name'] = user_id.first_name
                     returnedUser['last_name'] = user_id.last_name
                     returnedUser['user_name'] = user_id.user_name
-                    print("Called flask_jwt_extended!")
+                    returnedUser['id'] = user_id.id
+                    # clear the failed login counter
+                    client.set(ip, 0)
+                    #print("Called flask_jwt_extended!")
                     return returnedUser, 201
                 else:
-                    client.set(login, 1)
-                    print(client.get(login))
+                    checkBanList(ip)
                     return {'message': 'The username or password is incorrect'}, 400
             else:
-                client.set(user_id, 1)
-                print(client.get(user_id))
+                checkBanList(ip)
                 return {'message': 'The username or password is incorrect'}, 400
         else:
-            count = client.get(data['user_name'])
-            if count is None:
-                count = 0
-            print("count:",count)
-            count += 1
-            print("trying to get:",client.get(data['user_name']))
-            client.set(data['user_name'], count)
-            print(client.get(data['user_name']))
+            checkBanList(ip)
             return {'message': 'The username or password is incorrect'}, 400
 
     # create password

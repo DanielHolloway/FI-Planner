@@ -7,6 +7,15 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 entries_schema = EntrySchema(many=True)
 entry_schema = EntrySchema()
 
+
+class UserEntryResource(Resource):
+    @jwt_required
+    def get(self, user_id):
+        print("hit the get",user_id)
+        entries = Entry.query.filter(Entry.related_user_id == user_id).all()
+        entries = entries_schema.dump(entries).data
+        return {'status': 'success', 'data': entries}, 200
+
 class EntryResource(Resource):
     @jwt_required
     def get(self):

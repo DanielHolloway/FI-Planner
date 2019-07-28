@@ -2,19 +2,14 @@ import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import EntryTable from './EntryTable';
-import EntryForm from './EntryForm';
-import articleData from '../articleData'
-import Header from './Header';
-import PhotoCred from './PhotoCred';
+import LoginForm from './LoginForm';
+import Header from '../components/Header';
+import PhotoCred from '../components/PhotoCred';
 
 import { authHeader } from '../helpers';
 
 import { userActions } from '../actions';
 
-import axios from 'axios';
-
-console.log("in Journal jsx");
 
 const txtFieldState = {
     valid: true,
@@ -22,45 +17,54 @@ const txtFieldState = {
     errMsg: "" //this is where our error message gets across
 };
 
-class Journal extends Component {
+class SignUp extends Component {
     constructor() {
         super();
         this.state = {
-            shmeats: [],
-            name: {
+            first_name: {
                 ...txtFieldState,
-                fieldName: "entryName",
+                fieldName: "First name",
                 required: true,
-                requiredTxt: "Name is required",
-                formatErrorTxt: "Incorrect name format",
+                requiredTxt: "First name is required",
+                formatErrorTxt: "Incorrect first name format",
                 type: "text",
                 value: ''
             },
-            category: {
+            last_name: {
                 ...txtFieldState,
-                fieldName: "entryCategory",
+                fieldName: "Last name",
                 required: true,
-                requiredTxt: "Name is required",
-                formatErrorTxt: "Incorrect category format",
+                requiredTxt: "Last name is required",
+                formatErrorTxt: "Incorrect last name format",
                 type: "text",
-                value: 'Work'
+                value: ''
             },
-            month: {
+            username: {
                 ...txtFieldState,
-                fieldName: "entryMonth",
+                fieldName: "Username",
                 required: true,
-                requiredTxt: "Month is required",
-                formatErrorTxt: "Incorrect month format",
+                requiredTxt: "Username is required",
+                formatErrorTxt: "Incorrect username format",
                 type: "text",
-                value: 'July'
+                value: ''
             },
-            amount: {
+            /* do email later
+            email: {
                 ...txtFieldState,
-                fieldName: "entryAmount",
+                fieldName: "Email",
                 required: true,
-                requiredTxt: "Amount is required",
-                formatErrorTxt: "Incorrect amount format",
-                type: "number",
+                requiredTxt: "Email is required",
+                formatErrorTxt: "Incorrect email format",
+                type: "email",
+                value: ''
+            },*/
+            password: {
+                ...txtFieldState,
+                fieldName: "Password",
+                required: true,
+                requiredTxt: "Password is required",
+                formatErrorTxt: "Incorrect password format",
+                type: "password",
                 value: ''
             },
             allFieldsValid: false
@@ -68,7 +72,7 @@ class Journal extends Component {
         this.submitEntry = this.submitEntry.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
 
-        console.log("in Journal jsx deeper");
+        console.log("in SignUp jsx deeper");
         //console.log(curUser);
     }
 
@@ -76,9 +80,13 @@ class Journal extends Component {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
+        console.log(name,value);
         this.setState({
-            [name]: value
-        })
+            [name]: {
+                ...this.state[name],
+                value: value
+            }
+        });
     }
 
     reduceFormValues = formElements => {
@@ -129,36 +137,20 @@ class Journal extends Component {
         .some(field => !field.valid);
     };
 
-    validateSubmit = (target) => {
-        //we filter out `allFieldsValid` property as this is not included state for our input fields
-        console.log(target);
-        const formValues = this.reduceFormValues(target.elements);
-        const allFieldsValid = this.checkAllFieldsValid(formValues);
-        
-        console.log(allFieldsValid);
-
-        this.setState({ ...formValues, allFieldsValid }); //we set the state based on the extracted values from Constraint Validation API
-        
-    };
-
-    submitEntry(e) {
-        e.preventDefault();
-        //hard-coded the related_user_id until I develop user authentication
-        this.validateSubmit(e.target);
+    postUser() {
         console.log("posting this!",this.state);
         if(this.state.allFieldsValid){
             var postHeader = authHeader();
             postHeader['Accept'] = 'application/json';
             postHeader['Content-Type'] = 'application/json';
-            fetch('http://127.0.0.1:5000/api/Entry', {
+            fetch('http://127.0.0.1:5000/api/User', {
                 method: 'POST',
                 headers: postHeader,
                 body: JSON.stringify({
-                    name: this.state.name.value,
-                    category: this.state.category.value,
-                    month: this.state.month.value,
-                    amount: this.state.amount.value,
-                    related_user_id: 1
+                    first_name: this.state.first_name.value,
+                    last_name: this.state.last_name.value,
+                    user_name: this.state.username.value,
+                    password_hash: this.state.password.value
                 })
             })
             .then((response) => {
@@ -168,12 +160,24 @@ class Journal extends Component {
             .then((data) => {
                 console.log("DATA STORED",data);
                 this.state = {
-                    entryName: '',
-                    entryCategory: 'Work',
-                    entryMonth: 'May',
-                    entryAmount: 0
+                    first_name: {
+                        ...this.state[first_name],
+                        value: ''
+                    },
+                    last_name: {
+                        ...this.state[last_name],
+                        value: ''
+                    },
+                    username: {
+                        ...this.state[username],
+                        value: ''
+                    },
+                    password: {
+                        ...this.state[password],
+                        value: ''
+                    },
+                    allFieldsValid: false
                 };
-                this.getEntries();
             })
             .catch((error) => {
                 console.log('error: ' + error);
@@ -182,7 +186,25 @@ class Journal extends Component {
         }
     }
 
-    getEntries() {
+    validateSubmit = (target) => {
+        //we filter out `allFieldsValid` property as this is not included state for our input fields
+        console.log(target);
+        const formValues = this.reduceFormValues(target.elements);
+        const allFieldsValid = this.checkAllFieldsValid(formValues);
+        
+        console.log(allFieldsValid);
+
+        this.setState({ ...formValues, allFieldsValid }, this.postUser); //we set the state based on the extracted values from Constraint Validation API
+        
+    };
+
+    submitEntry(e) {
+        e.preventDefault();
+        //hard-coded the related_user_id until I develop user authentication
+        this.validateSubmit(e.target);
+    }
+
+    /*getEntries() {
         fetch('http://127.0.0.1:5000/api/Entry', {
             method: 'GET',
             headers: authHeader()
@@ -203,14 +225,9 @@ class Journal extends Component {
 
     componentDidMount() {
         this.getEntries();
-    }
+    }*/
 
     render() {
-        {/*const articleSort = this.state.shmeats.sort((a,b)=>(b.comment - a.comment));
-        const articleCom = articleSort.map((a)=>(
-                <Article key={'article-'+a.key} article={a} />
-            )
-        )*/}
         return (
             <div>
                 <div className="bg-journal position-absolute">
@@ -218,18 +235,15 @@ class Journal extends Component {
                 <div className="position-relative">
                     <div className="h-100 w-100 flex-container">
                         <div className="h-95 w-100 flex-center-space">
-                            <Header logo={articleData.logo}/>
+                            <Header />
                             <div className="h-100 w-100 d-flex align-items-center mt-5">
                                 <div className="d-flex flex-row h-100 w-100 flex-even align-items-baseline">
                                     <div className="w-50">
-                                        {this.state.shmeats}
-                                    </div>
-                                    <div className="w-25">
-                                        <EntryForm 
+                                        <LoginForm 
                                             value={this.state}
                                             handleInputChange={this.handleInputChange}
                                             submitEntry={this.submitEntry}
-                                            key="entry-form" 
+                                            key="login-form" 
                                         />
                                     </div>
                                 </div>
@@ -257,5 +271,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedJournal = connect(mapStateToProps)(Journal);
-export { connectedJournal as Journal };
+const connectedSignUp = connect(mapStateToProps)(SignUp);
+export { connectedSignUp as SignUp };

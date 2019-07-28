@@ -106,6 +106,7 @@ To-do list:
     ### FEATURES ###
     Mobile responsiveness
     Figure out checklist for deployment:
+        ### This whole list needs to be constantly reviewed as new features are added ###
         0. Reference: https://martinfowler.com/articles/web-security-basics.html
         1. User/API auth and protection - JWT done on 7/21, need to cascade
             How to authenticate user logins before successful password check?
@@ -120,7 +121,7 @@ To-do list:
         3. Input validation
             React - finished home and journal input validation on 7/26
             Flask - need to do more validations on API's
-        4. Output encoding (for HTML outputs)
+        4. Output encoding (for HTML outputs) - done on 7/26
             React -
                 Don't use dangerouslySetInnerHTML
                 Don't allow user inputs to populate href fields or src fields or props (elements)
@@ -129,8 +130,9 @@ To-do list:
         6. Hash and salt passwords
             12-100 alpha-numeric and symbolic
             tell users good habits to use when making password
-        7. User authentication
+        7. User authentication - done on 7/27
             Prevent brute force attacks - maybe use a captcha after two failed and lock the account temporarily after 2 more?
+            Locked bad login attempts on 7/27, maybe add captcha's or email challenges later
             Memcached - install on dev environments and deployment environment before running server
                 Only works on Linux, run these commands
                     Restart memcached, change to start/stop as needed: sudo systemctl restart memcached

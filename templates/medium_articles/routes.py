@@ -12,6 +12,7 @@ from flask import redirect
 medium_blueprint = Blueprint('medium_article',__name__)
 @medium_blueprint.route('/login')
 @medium_blueprint.route('/journal')
+@medium_blueprint.route('/signup')
 def index():
     print("shmeeeat")
     return render_template("index.html")
