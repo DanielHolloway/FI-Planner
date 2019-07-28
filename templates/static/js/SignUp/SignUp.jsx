@@ -28,6 +28,7 @@ class SignUp extends Component {
                 requiredTxt: "First name is required",
                 formatErrorTxt: "Incorrect first name format",
                 type: "text",
+                pattern: "",
                 value: ''
             },
             last_name: {
@@ -37,6 +38,7 @@ class SignUp extends Component {
                 requiredTxt: "Last name is required",
                 formatErrorTxt: "Incorrect last name format",
                 type: "text",
+                pattern: "",
                 value: ''
             },
             username: {
@@ -46,6 +48,7 @@ class SignUp extends Component {
                 requiredTxt: "Username is required",
                 formatErrorTxt: "Incorrect username format",
                 type: "text",
+                pattern: "",
                 value: ''
             },
             /* do email later
@@ -62,9 +65,10 @@ class SignUp extends Component {
                 ...txtFieldState,
                 fieldName: "Password",
                 required: true,
-                requiredTxt: "Password is required",
+                requiredTxt: "Password must be at least 12 characters and contain one uppercase letter, one lowercase letter, and one digit.",
                 formatErrorTxt: "Incorrect password format",
                 type: "password",
+                pattern: "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{12,100}$",
                 value: ''
             },
             allFieldsValid: false
@@ -97,11 +101,12 @@ class SignUp extends Component {
           .filter(elem => elem.name.length > 0)
           .map(x => {
             const { typeMismatch } = x.validity;
-            const { name, type, value } = x;
-    
+            const { name, type, value, pattern } = x;
+            console.log(typeMismatch,x);
             return {
               name,
               type,
+              pattern,
               typeMismatch, //we use typeMismatch when format is incorrect(e.g. incorrect email)
               value,
               valid: x.checkValidity()
@@ -109,7 +114,7 @@ class SignUp extends Component {
           })
           .reduce((acc, currVal) => {
             //then we finally use reduce, ready to put it in our state
-            const { value, valid, typeMismatch, type } = currVal;
+            const { value, valid, typeMismatch, type, pattern } = currVal;
             console.log(currVal,this.state[currVal.name]);
             const { fieldName, requiredTxt, formatErrorTxt } = this.state[
               currVal.name
@@ -119,6 +124,8 @@ class SignUp extends Component {
             acc[currVal.name] = {
               value,
               valid,
+              type,
+              pattern,
               typeMismatch,
               fieldName,
               requiredTxt,
@@ -159,6 +166,12 @@ class SignUp extends Component {
             })
             .then((data) => {
                 console.log("DATA STORED",data);
+                const { username, password } = this.state;
+                const { dispatch } = this.props;
+                console.log(username,password,this.props);
+                if (username.value && password.value) {
+                   dispatch(userActions.login(username.value, password.value));
+                }
                 this.state = {
                     first_name: {
                         ...this.state[first_name],
@@ -193,7 +206,6 @@ class SignUp extends Component {
         const allFieldsValid = this.checkAllFieldsValid(formValues);
         
         console.log(allFieldsValid);
-
         this.setState({ ...formValues, allFieldsValid }, this.postUser); //we set the state based on the extracted values from Constraint Validation API
         
     };

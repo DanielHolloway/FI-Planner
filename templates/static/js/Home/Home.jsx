@@ -67,6 +67,7 @@ class Home extends Component {
          this.setState({ submitted: true, badLogin: false, lockOut: false });
          const { username, password } = this.state;
          const { dispatch } = this.props;
+         console.log(username,password,this.props);
          if (username && password) {
             dispatch(userActions.login(username, password));
          }
@@ -101,7 +102,7 @@ class Home extends Component {
                <div className="h-100 w-100 flex-container">
                   <div className="w-100 d-flex flex-row align-items-end justify-content-end">
                   {logFlag ? (
-                     <div className="w-25 mt-1">
+                     <div className="w-50 mt-1">
                         <div className="text-white d-flex flex-column align-items-end flex-end p-3 f-2">
                            <p>Hi {user.first_name + " " + user.last_name} </p>
                            <p className="cursor-pointer" onClick={ (e) => this.logOut() }>
@@ -110,7 +111,7 @@ class Home extends Component {
                         </div>
                      </div>
                   ) : (
-                     <div className="w-25 mt-1">
+                     <div className="w-50 mt-1">
                         <form name="form" onSubmit={this.handleSubmit} className="text-white d-flex flex-column flex-even">
                            <div className="d-flex flex-row flex-even align-items-center">
                               <div className={'' + (submitted && !username ? ' has-error' : '')}>

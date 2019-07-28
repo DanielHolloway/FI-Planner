@@ -180,3 +180,6 @@ h3.customFont {
 .align-self-flex-end {
     align-self: flex-end;
 }
+.error-color {
+    color: mediumpurple;
+}

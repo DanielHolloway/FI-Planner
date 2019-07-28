@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Journal from './Journal';
 
 const ErrorValidationLabel = ({ txtLbl }) => (
-  <label className="mb-0" htmlFor="" style={{ color: "red" }}>
+  <label className="mb-0 error-color" htmlFor="">
     {txtLbl}
   </label>
 );

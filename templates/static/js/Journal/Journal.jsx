@@ -115,6 +115,7 @@ class Journal extends Component {
             acc[currVal.name] = {
               value,
               valid,
+              type,
               typeMismatch,
               fieldName,
               requiredTxt,

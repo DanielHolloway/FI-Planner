@@ -33,7 +33,6 @@ export default class EntryTable extends Component {
         let shmeats = this.state.entries.filter(this.filterBySearch).map((entry) => {
             return(
                 <tr key={'entry-'+entry.id}>
-                    <th scope="row">{entry.id}</th>
                     <td>{entry.name}</td>
                     <td>{entry.month}</td>
                     <td>{entry.category}</td>
@@ -80,7 +79,6 @@ export default class EntryTable extends Component {
                     <table className="table table-dark w-100 glow">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Month</th>
                                 <th scope="col">Category</th>
