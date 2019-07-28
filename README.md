@@ -127,8 +127,8 @@ To-do list:
                 Don't allow user inputs to populate href fields or src fields or props (elements)
         5. Parameter binding - done on 7/7
             Flask - handled by SQLAlchemy functions
-        6. Hash and salt passwords
-            12-100 alpha-numeric and symbolic
+        6. Hash and salt passwords - done on 7/28
+            12-100 alpha-numeric
             tell users good habits to use when making password
         7. User authentication - done on 7/27
             Prevent brute force attacks - maybe use a captcha after two failed and lock the account temporarily after 2 more?
@@ -140,9 +140,13 @@ To-do list:
                     Check for specific memcached stats: memcstat --servers="<correct IP>"
         8. Session Management
             Look into safe session management for JWT's (article only talked about cookies)
+            https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/JSON_Web_Token_Cheat_Sheet_for_Java.md
+            ^ finished "explicit revocation by user"
         9. Authorize Actions
             Based on a user's role, map the correct permissions "upstream". Called Role Based Access Control (RBAC)
             To ensure consistent user auth, set Cache-Control header to "private, no-cache, no-store"
+        10. Activity logging
+            By IP address, page, and actions
         DB encryption?
         What else? Check with OWASP and DWVA
     Hosted on AWS

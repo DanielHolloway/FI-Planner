@@ -10,9 +10,6 @@ export const userService = {
 function login(username, password) {
     console.log("ooo baby");
     const requestOptions = {
-        /*method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })*/
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -20,7 +17,6 @@ function login(username, password) {
         },
         body: JSON.stringify({
             password_hash: password,
-            related_user_id: 2,
             user_name: username
         })
     };
@@ -36,9 +32,32 @@ function login(username, password) {
         });
 }
 
-function logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('user');
+function logout(username) {
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify({
+            user_name: username
+        })
+    };
+
+    return fetch('/logout', requestOptions)
+        .then(function(response) {            
+            response.text().then(text => {
+                const data = text && JSON.parse(text);
+                console.log("GOT THIS RESPONSE: ",response,data);
+                if (!response.ok) {        
+                    const error = (data && data.message) || response.statusText;
+                    return Promise.reject(error);
+                }
+                else{
+                    // remove user from local storage to log user out
+                    localStorage.removeItem('user');
+                    return data;
+                }
+
+            });
+        });
 }
 
 function getAll() {

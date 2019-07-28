@@ -51,7 +51,6 @@ class Home extends Component {
            },
            body: JSON.stringify({
                password_hash: this.state.password,
-               related_user_id: 0,
                user_name: this.state.username
            })
       })
@@ -88,7 +87,7 @@ class Home extends Component {
             password: '',
             submitted: false,
             badLogin: false
-        }
+         }
       );
    }
 

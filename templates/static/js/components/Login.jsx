@@ -29,7 +29,6 @@ export default class Login extends Component {
             },
             body: JSON.stringify({
                 password_hash: this.state.pass,
-                related_user_id: 0,
                 user_name: this.state.user
             })
         })

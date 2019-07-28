@@ -31,9 +31,29 @@ function login(username, password) {
     function failure(error) { return { type: userConstants.LOGIN_FAILURE, error } }
 }
 
-function logout() {
+function logout(username) {
     userService.logout();
-    return { type: userConstants.LOGOUT };
+    return { type: userConstants.LOGOUT_SUCCESS }
+    
+    return dispatch => {
+        dispatch(request({ username }));
+
+        userService.logout()
+            .then(
+                user => { 
+                    dispatch(success());
+                    history.push('/');
+                },
+                error => {
+                    dispatch(failure(error));
+                    dispatch(alertActions.error(error));
+                }
+            );
+    };
+
+    function request(user) { return { type: userConstants.LOGOUT_REQUEST, user } }
+    function success() { return { type: userConstants.LOGOUT_SUCCESS } }
+    function failure(error) { return { type: userConstants.LOGOUT_FAILURE, error } }
 }
 
 function getAll() {

@@ -5,10 +5,12 @@ from flask_restful import Resource
 from Model import db, Login, LoginSchema, User, client
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
-from flask_jwt_extended import (create_access_token, create_refresh_token, 
+from flask_jwt_extended import (create_access_token, create_refresh_token, get_raw_jwt,
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
+
 import json
 from templates import ip_ban_list
+#from run import app
 
 logins_schema = LoginSchema(many=True)
 login_schema = LoginSchema()
@@ -20,12 +22,14 @@ class LoginResource(Resource):
     #     logins = logins_schema.dump(logins).data
     #     return {'status': 'success', 'data': logins}, 200
 
+
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
                return {'message': 'No input data provided'}, 400
         # Validate and deserialize input
         print(json_data)
+        json_data['related_user_id'] = 0
         data, errors = login_schema.load(json_data)
         if errors:
             return errors, 422

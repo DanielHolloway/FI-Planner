@@ -4,8 +4,7 @@ from resources.User import UserResource
 from resources.Login import LoginResource
 from resources.Account import AccountResource
 from resources.Membership import MembershipResource
-from resources.Entry import EntryResource
-from resources.Entry import UserEntryResource
+from resources.Entry import EntryResource, UserEntryResource
 from resources.Comment import CommentResource
 from resources.Category import CategoryResource
 api_bp = Blueprint('api', __name__)
