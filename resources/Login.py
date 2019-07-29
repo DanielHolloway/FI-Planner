@@ -66,12 +66,14 @@ class LoginResource(Resource):
                     returnedUser['id'] = user_id.id
                     # Set the JWTs and the CSRF double submit protection cookies
                     # in this response
-                    resp = jsonify({'login': True})
-                    #resp['message'] = 'Login successful'
-                    #resp['first_name'] = user_id.first_name
-                    # resp['last_name'] = user_id.last_name
-                    # resp['user_name'] = user_id.user_name
-                    # resp['id'] = user_id.id
+                    resp = jsonify({
+                        'login': True,
+                        'message': 'Login successful',
+                        'first_name': user_id.first_name,
+                        'last_name': user_id.last_name,
+                        'user_name': user_id.user_name,
+                        'id': user_id.id,
+                        })
                     set_access_cookies(resp, access_token)
                     set_refresh_cookies(resp, refresh_token)
                     # clear the failed login counter
