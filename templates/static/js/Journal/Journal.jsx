@@ -200,8 +200,13 @@ class Journal extends Component {
             headers: authHeader()
         })
         .then(results => {
+            console.log(results);
+            if(!results.response){
+                this.props.dispatch(userActions.logout());
+            }
             return results.json();
         }).then(data => {
+            console.log(data);
             let shmeats = this.buildTable(data.data);
             this.setState({shmeats: shmeats});
         });

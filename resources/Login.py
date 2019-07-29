@@ -1,12 +1,13 @@
 import os
 import datetime
-from flask import request
+from flask import request, jsonify
 from flask_restful import Resource
 from Model import db, Login, LoginSchema, User, client
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 from flask_jwt_extended import (create_access_token, create_refresh_token, get_raw_jwt,
-                                jwt_required, jwt_refresh_token_required, get_jwt_identity)
+                                jwt_required, jwt_refresh_token_required, get_jwt_identity, 
+                                set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
 
 import json
 from templates import ip_ban_list
@@ -57,16 +58,27 @@ class LoginResource(Resource):
                     refresh_token = create_refresh_token(identity=data)
                     returnedUser = {}
                     returnedUser['message'] = 'Login successful'
-                    returnedUser['token'] = access_token
-                    returnedUser['refresh'] = refresh_token
+                    #returnedUser['token'] = access_token
+                    #returnedUser['refresh'] = refresh_token
                     returnedUser['first_name'] = user_id.first_name
                     returnedUser['last_name'] = user_id.last_name
                     returnedUser['user_name'] = user_id.user_name
                     returnedUser['id'] = user_id.id
+                    # Set the JWTs and the CSRF double submit protection cookies
+                    # in this response
+                    resp = jsonify({'login': True})
+                    #resp['message'] = 'Login successful'
+                    #resp['first_name'] = user_id.first_name
+                    # resp['last_name'] = user_id.last_name
+                    # resp['user_name'] = user_id.user_name
+                    # resp['id'] = user_id.id
+                    set_access_cookies(resp, access_token)
+                    set_refresh_cookies(resp, refresh_token)
                     # clear the failed login counter
                     client.set(ip, 0)
                     #print("Called flask_jwt_extended!")
-                    return returnedUser, 201
+                    resp.status_code = 200
+                    return resp
                 else:
                     checkBanList(ip)
                     return {'message': 'The username or password is incorrect'}, 400

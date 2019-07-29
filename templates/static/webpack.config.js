@@ -8,7 +8,7 @@ const config = {
       path: resolve('../public'),
       filename: 'bundle.js',
       publicPath: resolve('../public')
-},
+ },
  resolve: {
   extensions: ['.js','.jsx','.css']
  },

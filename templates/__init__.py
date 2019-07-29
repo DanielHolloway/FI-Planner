@@ -5,7 +5,8 @@ from flask import request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 from flask_login import LoginManager
-from flask_jwt_extended import JWTManager, get_jwt_identity, get_raw_jwt, jwt_required
+from flask_jwt_extended import (JWTManager, get_jwt_identity, get_raw_jwt, jwt_required, 
+                                set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
 
 ip_ban_list = []
 
@@ -19,6 +20,15 @@ def create_app(config_filename):
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+    app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+    # Only allow JWT cookies to be sent over https. In production, this should likely be True
+    app.config['JWT_COOKIE_SECURE'] = False
+    app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
+    app.config['JWT_REFRESH_COOKIE_PATH'] = '/token/refresh'
+
+    # Enable csrf double submit protection. See this for a thorough
+    # explanation: http://www.redotheweb.com/2015/11/09/api-security.html
+    app.config['JWT_COOKIE_CSRF_PROTECT'] = True
 
     app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True

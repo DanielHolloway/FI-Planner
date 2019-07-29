@@ -26,7 +26,7 @@ function login(username, password) {
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             console.log("stringifying this user: ", user);
-            localStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('user', JSON.stringify(user));
 
             return user;
         });
@@ -46,10 +46,10 @@ function logout() {
             response.text().then(text => {
                 const data = text && JSON.parse(text);
                 console.log("GOT THIS RESPONSE: ",response,data);
-                if (response.ok) {        
+                      
                     // remove user from local storage to log user out
-                    localStorage.removeItem('user');
-                }
+                    sessionStorage.removeItem('user');
+                
 
             });
         });
@@ -64,7 +64,7 @@ function getAll() {
     return fetch('api/User', requestOptions).then(handleResponse)
     .then(users => {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem('users', JSON.stringify(users));
+        sessionStorage.setItem('users', JSON.stringify(users));
 
         return users;
     });

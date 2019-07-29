@@ -48,13 +48,16 @@ class Home extends Component {
            headers: {
                'Accept': 'application/json',
                'Content-Type': 'application/json',
+               "content-type": "API-Key",
            },
+           credentials: "include",
            body: JSON.stringify({
                password_hash: this.state.password,
                user_name: this.state.username
            })
       })
       .then((response) => {
+         console.log(response.headers);
          if(response.status == 403){
             this.setState({ lockOut: true });
          }

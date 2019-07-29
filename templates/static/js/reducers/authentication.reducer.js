@@ -2,7 +2,7 @@ import { userConstants } from '../constants';
 
 let user = {};
 try{
-    user = JSON.parse(localStorage.getItem('user'));
+    user = JSON.parse(sessionStorage.getItem('user'));
 }
 catch (e){
     console.log("exception: ",e);
