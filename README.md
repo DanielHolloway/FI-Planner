@@ -143,8 +143,8 @@ To-do list:
             https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/JSON_Web_Token_Cheat_Sheet_for_Java.md
             ^ finished "explicit revocation by user"
             need to add refresh tokens, fresh vs non-fresh
-            need to add hardened cookies (for token sidejacking)
-            
+            need to add hardened cookies (for token sidejacking): code example is https://flask-jwt-extended.readthedocs.io/en/latest/tokens_in_cookies.html
+
         9. Authorize Actions
             Based on a user's role, map the correct permissions "upstream". Called Role Based Access Control (RBAC)
             To ensure consistent user auth, set Cache-Control header to "private, no-cache, no-store"
