@@ -1,8 +1,9 @@
 
-import { authHeader } from '../helpers';
+import { authHeader, authHeaderRefresh } from '../helpers';
 
 export const userService = {
     login,
+    refresh,
     logout,
     getAll
 };
@@ -23,6 +24,24 @@ function login(username, password) {
 
     return fetch('/api/Login', requestOptions)
         .then(handleResponse)
+        .then(user => {
+            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            console.log("stringifying this user: ", user);
+            sessionStorage.setItem('user', JSON.stringify(user));
+
+            return user;
+        });
+}
+
+function refresh() {
+    console.log("ooo baby");
+    const requestOptions = {
+        method: 'POST',
+        headers: authHeaderRefresh(),
+    };
+
+    return fetch('/api/Token', requestOptions)
+        .then(handleResponseNoLogout)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
             console.log("stringifying this user: ", user);
@@ -60,10 +79,10 @@ function getAll() {
         method: 'GET',
         headers: authHeader()
     };
-
     return fetch('api/User', requestOptions).then(handleResponse)
     .then(users => {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
+        console.log(users);
         sessionStorage.setItem('users', JSON.stringify(users));
 
         return users;
@@ -81,6 +100,19 @@ function handleResponse(response) {
                 location.reload(true);
             }
 
+            const error = (data && data.message) || response.statusText;
+            return Promise.reject(error);
+        }
+
+        return data;
+    });
+}
+
+function handleResponseNoLogout(response) {
+    return response.text().then(text => {
+        const data = text && JSON.parse(text);
+        console.log("GOT THIS RESPONSE: ",response,data);
+        if (!response.ok) {
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }

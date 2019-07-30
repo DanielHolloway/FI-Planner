@@ -16,6 +16,29 @@ from templates import ip_ban_list
 logins_schema = LoginSchema(many=True)
 login_schema = LoginSchema()
 
+class LoginRefreshResource(Resource):
+    @jwt_refresh_token_required
+    def post(self):
+        # Create the new access token
+        current_user = get_jwt_identity()
+        print("found user in refresh:",current_user)
+        access_token = create_access_token(identity=current_user)
+        # Set the access JWT and CSRF double submit protection cookies
+        # in this response
+        user_id = User.query.filter_by(user_name=current_user).first()
+        resp = jsonify({
+                'refresh': True,
+                'message': 'Login successful',
+                'first_name': user_id.first_name,
+                'last_name': user_id.last_name,
+                'user_name': user_id.user_name,
+                'id': user_id.id,
+                })
+        set_access_cookies(resp, access_token)
+        resp.status_code = 200
+        return resp
+
+
 class LoginResource(Resource):
     # We probably don't need to query all logins using an API
     # def get(self):
@@ -56,14 +79,6 @@ class LoginResource(Resource):
                 if check_password_hash(login.password_hash, json_data['password_hash']):
                     access_token = create_access_token(identity=data)
                     refresh_token = create_refresh_token(identity=data)
-                    returnedUser = {}
-                    returnedUser['message'] = 'Login successful'
-                    #returnedUser['token'] = access_token
-                    #returnedUser['refresh'] = refresh_token
-                    returnedUser['first_name'] = user_id.first_name
-                    returnedUser['last_name'] = user_id.last_name
-                    returnedUser['user_name'] = user_id.user_name
-                    returnedUser['id'] = user_id.id
                     # Set the JWTs and the CSRF double submit protection cookies
                     # in this response
                     resp = jsonify({

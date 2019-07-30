@@ -27,7 +27,8 @@ class Home extends Component {
    }
    
    componentDidMount() {
-      this.props.dispatch(userActions.getAll());
+      //this.props.dispatch(userActions.getAll());
+      this.props.dispatch(userActions.refresh());
    }
 
    handleChange(e) {

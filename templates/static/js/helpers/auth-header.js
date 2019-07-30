@@ -19,3 +19,8 @@ export function authHeader() {
         return {};
     }
 }
+
+export function authHeaderRefresh() {
+    console.log(Cookies.get('csrf_refresh_token'));
+    return { 'X-CSRF-TOKEN': Cookies.get('csrf_refresh_token') };
+}

@@ -5,8 +5,8 @@ from flask import request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
 from flask_login import LoginManager
-from flask_jwt_extended import (JWTManager, get_jwt_identity, get_raw_jwt, jwt_required, 
-                                set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
+from flask_jwt_extended import (JWTManager, get_jwt_identity, get_raw_jwt, jwt_required, jwt_refresh_token_required,
+                                create_access_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
 
 ip_ban_list = []
 
@@ -24,7 +24,7 @@ def create_app(config_filename):
     # Only allow JWT cookies to be sent over https. In production, this should likely be True
     app.config['JWT_COOKIE_SECURE'] = False
     app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
-    app.config['JWT_REFRESH_COOKIE_PATH'] = '/token/refresh'
+    app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/Token'
 
     # Enable csrf double submit protection. See this for a thorough
     # explanation: http://www.redotheweb.com/2015/11/09/api-security.html
@@ -65,6 +65,12 @@ def create_app(config_filename):
     # should be added to the access token.
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
+        print("add claims user:",user)
+        try: 
+            user['user_name']
+        except:
+            return {'user_name': user}
+
         return {'user_name': user['user_name']}
 
     # Create a function that will be called whenever create_access_token
@@ -73,6 +79,11 @@ def create_app(config_filename):
     # of the access token should be.
     @jwt.user_identity_loader
     def user_identity_lookup(user):
+        try: 
+            user['user_name']
+        except:
+            return {'user_name': user}
+
         return user['user_name']
 
     # New function, verify the user claims in an access token
@@ -94,6 +105,21 @@ def create_app(config_filename):
     def failed_user_claim_verification_error():
         return jsonify({'msg': 'Access token is incorrect'}), 404
 
+    # @app.route('/token/refresh', methods=['POST'])
+    # @jwt_refresh_token_required
+    # def refresh():
+    #     # Create the new access token
+    #     current_user = get_jwt_identity()
+    #     print("found user in refresh:",current_user)
+    #     access_token = create_access_token(identity=current_user)
+    #     # Set the access JWT and CSRF double submit protection cookies
+    #     # in this response
+    #     resp = jsonify({
+    #             'refresh': True,
+    #             'user_name': current_user
+    #             })
+    #     set_access_cookies(resp, access_token)
+    #     return resp, 200
 
     @app.route('/logout', methods=['POST'])
     @jwt_required
@@ -101,7 +127,9 @@ def create_app(config_filename):
         print("logging out in init.py")
         jti = get_raw_jwt()['jti']
         blacklist.add(jti)
-        return jsonify({"msg": "Successfully logged out"}), 200
+        resp = jsonify({'logout': True})
+        unset_jwt_cookies(resp)
+        return resp, 200
 
     from Model import Login
 

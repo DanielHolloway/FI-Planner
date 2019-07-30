@@ -24,6 +24,16 @@ export function authentication(state = initialState, action) {
         };
     case userConstants.LOGIN_FAILURE:
         return {};
+    case userConstants.USERS_REFRESH_REQUEST:
+        return {};
+    case userConstants.USERS_REFRESH_SUCCESS:
+        console.log(action.user);
+        return {
+        loggedIn: true,
+        user: action.user
+        };
+    case userConstants.USERS_REFRESH_FAILURE:
+        return {};
     case userConstants.LOGOUT:
         return {};
     default:
