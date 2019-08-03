@@ -42,7 +42,10 @@ function refresh() {
                     userService.refresh()
                         .then(
                             user => { 
-                                /*console.log(users,user);
+                                /*if(user.success == false){
+                                    dispatch(failure(user));
+                                }
+                                console.log(users,user);
                                 var result = users.data.filter(obj => {
                                     return obj.user_name === user.user_name
                                 });
@@ -55,7 +58,7 @@ function refresh() {
                             },
                             error => {
                                 dispatch(failure(error));
-                                dispatch(alertActions.error(error));
+                                //dispatch(alertActions.error(error));
                             }
                         );
         //    });

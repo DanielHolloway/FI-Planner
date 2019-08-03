@@ -22,5 +22,11 @@ export function authHeader() {
 
 export function authHeaderRefresh() {
     console.log(Cookies.get('csrf_refresh_token'));
-    return { 'X-CSRF-TOKEN': Cookies.get('csrf_refresh_token') };
+    var refreshCookie = Cookies.get('csrf_refresh_token');
+    if(refreshCookie==undefined){
+        return false;
+    }
+    else{
+        return { 'X-CSRF-TOKEN': refreshCookie };
+    }
 }

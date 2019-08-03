@@ -1,15 +1,29 @@
-from flask import request
+from flask import request, g
 from flask_restful import Resource
 from Model import db, Entry, EntrySchema
-from flask_jwt_extended import (create_access_token, create_refresh_token,
+from flask_jwt_extended import (create_access_token, create_refresh_token, verify_jwt_in_request,
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
 
 entries_schema = EntrySchema(many=True)
 entry_schema = EntrySchema()
 
+from functools import wraps
+
+def admin_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        verify_jwt_in_request()
+        print("hit admin_required!:",g.user)
+        return fn(*args, **kwargs)
+        # claims = get_jwt_claims()
+        # if claims['roles'] != 'admin':
+        #     return jsonify(msg='Admins only!'), 403
+        # else:
+        #     return fn(*args, **kwargs)
+    return wrapper
 
 class UserEntryResource(Resource):
-    @jwt_required
+    @admin_required
     def get(self, user_id):
         print("hit the get",user_id)
         entries = Entry.query.filter(Entry.related_user_id == user_id).all()

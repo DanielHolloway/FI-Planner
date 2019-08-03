@@ -1,7 +1,8 @@
 from flask import request
 from flask_restful import Resource
-from Model import db, User, UserSchema, Login, LoginSchema
+from Model import db, User, UserSchema, Login, LoginSchema, Membership, MembershipSchema
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
 import json
@@ -9,6 +10,7 @@ import json
 users_schema = UserSchema(many=True)
 user_schema = UserSchema()
 login_schema = LoginSchema()
+membership_schema = MembershipSchema()
 
 class UserResource(Resource):
     #removed jwt gate so that Redux works
@@ -62,6 +64,38 @@ class UserResource(Resource):
 
         db.session.add(login)
         db.session.commit()
+
+        login_result = login_schema.dump(login).data
+
+        user_membership = {"related_user_id": result['id'], "related_account_id": 0, "related_role_id": 1, "account_email_address": "sugon@deez.nutz", "account_phone_number": ""}
+
+        data, errors = membership_schema.load(user_membership)
+        print("data and errors: ",data,errors)
+        if errors:
+            return errors, 422
+        # membership = Membership.query.filter_by(name=data['name']).first()
+        # if membership:
+        #     return {'message': 'Membership already exists'}, 400
+        membership = Membership(
+            related_user_id=user_membership['related_user_id'],
+            related_account_id=user_membership['related_account_id'],
+            related_role_id=user_membership['related_role_id'],
+            account_email_address=user_membership['account_email_address'],
+            account_phone_number=user_membership['account_phone_number']
+            )
+
+        db.session.add(membership)
+        db.session.commit()
+
+        # new_user.id = result['id']
+        # new_user.first_name = result['first_name'] 
+        # new_user.last_name = result['last_name']
+        # new_user.user_name = result['user_name']
+        user_id = User.query.filter_by(user_name=json_data['user_name']).first()
+        print("user_membership: ",user_membership)
+        print(user_membership['related_role_id']," ",result)
+        user_id.related_role_id = user_membership['related_role_id']
+        login_user(user_id)
 
         password_hash = ""
         user_login = {}

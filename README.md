@@ -144,10 +144,17 @@ To-do list:
             ^ finished "explicit revocation by user"
             need to add refresh tokens, fresh vs non-fresh
             need to add hardened cookies (for token sidejacking): code example is https://flask-jwt-extended.readthedocs.io/en/latest/tokens_in_cookies.html
+            First draft of session management done on 7/29
+            !!! remove refresh token upon logout? (using the blacklist?)
+
 
         9. Authorize Actions
             Based on a user's role, map the correct permissions "upstream". Called Role Based Access Control (RBAC)
             To ensure consistent user auth, set Cache-Control header to "private, no-cache, no-store"
+            Reference: https://medium.com/bluecore-engineering/implementing-role-based-security-in-a-web-app-89b66d1410e4
+                Flask-specific: https://www.reddit.com/r/flask/comments/2uovxs/af_manage_roles_in_rest_api/
+            Strategy is Role Based Security: make parent resources to group child resources, make roles to contain permissions, and make user groups to contain individual users. Then grant roles to user groups to access different parent or child resources
+            
         10. Activity logging
             By IP address, page, and actions
         DB encryption?

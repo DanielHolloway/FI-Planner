@@ -15,7 +15,7 @@ export default class LoginForm extends Component {
     changeData = (event) => {
         event.preventDefault();
         //check validity against HTML required
-        const checkValid = event.target.checkValidity();
+        //const checkValid = event.target.checkValidity();
         this.props.handleInputChange(event);
     }
 

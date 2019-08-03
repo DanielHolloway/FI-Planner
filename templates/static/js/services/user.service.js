@@ -35,6 +35,10 @@ function login(username, password) {
 
 function refresh() {
     console.log("ooo baby");
+    if(!authHeaderRefresh()){
+        const error = "REFRESH TOKEN UNAVAILABLE";
+        return Promise.reject(error);
+    }
     const requestOptions = {
         method: 'POST',
         headers: authHeaderRefresh(),

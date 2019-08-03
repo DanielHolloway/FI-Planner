@@ -201,10 +201,10 @@ class Journal extends Component {
         })
         .then(results => {
             console.log(results);
-            if(!results.ok){
+            /*if(!results.ok){
                 console.log("logging out in Journal.jsx",results);
                 this.props.dispatch(userActions.logout());
-            }
+            }*/
             return results.json();
         }).then(data => {
             console.log(data);

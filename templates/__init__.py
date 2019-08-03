@@ -1,10 +1,10 @@
 import os
 import datetime
-from flask import Flask
+from flask import Flask, g
 from flask import request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_jwt_extended import (JWTManager, get_jwt_identity, get_raw_jwt, jwt_required, jwt_refresh_token_required,
                                 create_access_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
 
@@ -95,9 +95,11 @@ def create_app(config_filename):
                 print("key not in user_claims",key,user_claims)
                 return False
             else:
-                if(get_jwt_identity() != user_claims[key]):
-                    print("identity doesn't match",get_jwt_identity(),user_claims[key])
-                    return False
+                checkJWT = get_jwt_identity()
+                if(checkJWT != None):
+                    if(checkJWT['user_name'] != user_claims[key]):
+                        print("identity doesn't match",get_jwt_identity(),user_claims[key])
+                        return False
         return True
 
     # New function, change the return value if user claims verification failed
@@ -131,11 +133,16 @@ def create_app(config_filename):
         unset_jwt_cookies(resp)
         return resp, 200
 
-    from Model import Login
+    from Model import User
 
     @login_manager.user_loader
     def load_user(user_id):
-        return Login.query.get(int(user_id))
+        print("load_user:",User.query.get(int(user_id)))
+        return User.query.get(int(user_id))
+
+    @app.before_request
+    def before_request():
+        g.user = current_user
 
     # used to instantiate comments.db
     with app.app_context():

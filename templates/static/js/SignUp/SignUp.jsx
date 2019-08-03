@@ -68,7 +68,7 @@ class SignUp extends Component {
                 requiredTxt: "Password must be at least 12 characters and contain one uppercase letter, one lowercase letter, and one digit.",
                 formatErrorTxt: "Incorrect password format",
                 type: "password",
-                pattern: "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{12,100}$",
+                pattern: "",
                 value: ''
             },
             allFieldsValid: false
@@ -102,14 +102,24 @@ class SignUp extends Component {
           .map(x => {
             const { typeMismatch } = x.validity;
             const { name, type, value, pattern } = x;
-            console.log(typeMismatch,x);
+            console.log("getting validity!",typeMismatch,x.checkValidity(),x.validationMessage);
+            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            var validFlag=true;
+            if(type=='password'){
+                validFlag = strongRegex.test(value);
+                console.log(validFlag);
+            }
+            else{
+                validFlag = x.checkValidity();
+            }
+
             return {
               name,
               type,
               pattern,
               typeMismatch, //we use typeMismatch when format is incorrect(e.g. incorrect email)
               value,
-              valid: x.checkValidity()
+              valid: validFlag //x.checkValidity()
             };
           })
           .reduce((acc, currVal) => {

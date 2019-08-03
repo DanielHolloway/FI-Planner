@@ -187,7 +187,7 @@ function mapStateToProps(state) {
     const { users, authentication } = state;
     const { user } = authentication;
     var logFlag = state.authentication.loggedIn;
-    
+    console.log("mapped state",user);
     return {
         user,
         users,

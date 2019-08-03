@@ -1,8 +1,8 @@
 import os
 import datetime
-from flask import request, jsonify
+from flask import request, jsonify, g
 from flask_restful import Resource
-from Model import db, Login, LoginSchema, User, client
+from Model import db, Login, LoginSchema, User, Membership, client
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
 from flask_jwt_extended import (create_access_token, create_refresh_token, get_raw_jwt,
@@ -26,6 +26,10 @@ class LoginRefreshResource(Resource):
         # Set the access JWT and CSRF double submit protection cookies
         # in this response
         user_id = User.query.filter_by(user_name=current_user).first()
+        user_membership = Membership.query.filter_by(related_user_id=user_id.id).first()
+        user_id.related_role_id = user_membership.related_role_id
+        login_user(user_id)
+        print("g's role is now",g.user.related_role_id)
         resp = jsonify({
                 'refresh': True,
                 'message': 'Login successful',
@@ -81,6 +85,9 @@ class LoginResource(Resource):
                     refresh_token = create_refresh_token(identity=data)
                     # Set the JWTs and the CSRF double submit protection cookies
                     # in this response
+                    user_membership = Membership.query.filter_by(related_user_id=user_id.id).first()
+                    user_id.related_role_id = user_membership.related_role_id
+                    login_user(user_id)
                     resp = jsonify({
                         'login': True,
                         'message': 'Login successful',
