@@ -18,6 +18,17 @@ deactivate
 
 To run Flask in Ubuntu: python3 run.py
 
+Running Gunicorn from terminal: gunicorn --bind 127.0.0.1:5000 -w 4 "templates:create_app('configurations.ProductionConfig')"
+
+Use this to list nginx sites: grep server_name /etc/nginx/sites-enabled/* -RiI
+
+After setting up Gunicorn and Nginx configs according to tutorial, my website will always be running at 127.0.0.1
+Use this to see Flask logs: sudo journalctl -u fi-planner
+And for Nginx logs: sudo journalctl -u nginx and sudo less /var/log/nginx/error.log and sudo less /var/log/nginx/access.log
+I got stuck because I didn't know to add "--log-level debug" to my gunicorn binding command and flush=True to my py prints
+I ended up needing to add "EnvironmentFile" to my fi-planner.service gunicorn file so that it could get the secrets
+Also, I had to update my method for pulling user IP's to get it from the Nginx request header
+
 To re-enter the virtual Python environment: .\env\Scripts\activate
 .\static> npm run watch (or npm run build)
 In root, do: py run.py
@@ -112,7 +123,10 @@ To-do list:
             How to authenticate user logins before successful password check?
             Locked up all API's and finished initial redirects on 7/26
         2. HTTPS - implementation started, but slow on localhost
-            use gunicorn and nginx
+            use gunicorn and nginx - https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04
+                Needed to specify factory in gunicorn start-up
+                Need to run "sudo ufw enable" to get "sudo ufw status" to show "active"
+                When using nano in Ubuntu, use Ctrl+O to save and Ctrl+X to exit the file
             get certificate from CA
             config: https://mozilla.github.io/server-side-tls/ssl-config-generator/
             check your config periodically: https://www.ssllabs.com/ssltest/
@@ -128,8 +142,8 @@ To-do list:
         5. Parameter binding - done on 7/7
             Flask - handled by SQLAlchemy functions
         6. Hash and salt passwords - done on 7/28
-            12-100 alpha-numeric
-            tell users good habits to use when making password
+            12-100 alpha-numeric - fixed password pattern checking on 8/3
+            tell users good habits to use when making password - done on 7/28
         7. User authentication - done on 7/27
             Prevent brute force attacks - maybe use a captcha after two failed and lock the account temporarily after 2 more?
             Locked bad login attempts on 7/27, maybe add captcha's or email challenges later
@@ -145,7 +159,8 @@ To-do list:
             need to add refresh tokens, fresh vs non-fresh
             need to add hardened cookies (for token sidejacking): code example is https://flask-jwt-extended.readthedocs.io/en/latest/tokens_in_cookies.html
             First draft of session management done on 7/29
-            !!! remove refresh token upon logout? (using the blacklist?)
+            remove refresh token upon logout? (using the blacklist?) - done on 8/3, didn't need blacklist
+            started to implement freshness check for sensitive endpoints on 8/3
 
 
         9. Authorize Actions
@@ -155,9 +170,18 @@ To-do list:
                 Flask-specific: https://www.reddit.com/r/flask/comments/2uovxs/af_manage_roles_in_rest_api/
             Strategy is Role Based Security: make parent resources to group child resources, make roles to contain permissions, and make user groups to contain individual users. Then grant roles to user groups to access different parent or child resources
             
+            Membership.related_role_id meanings:
+                1 = admin
+                2 = user
+                3 = guest
+
+            Restrict user's access to only their own info in API's unless admin
+
         10. Activity logging
             By IP address, page, and actions
         DB encryption?
         What else? Check with OWASP and DWVA
-    Hosted on AWS
+    Hosted on AWS 
+        - will probably need Ubuntu 18.04 or some other Linux for Memcached (blacklist) functionality
+
     Metrics page

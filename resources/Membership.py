@@ -3,12 +3,14 @@ from flask_restful import Resource
 from Model import db, Membership, MembershipSchema
 from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
+from templates import admin_required
 
 memberships_schema = MembershipSchema(many=True)
 membership_schema = MembershipSchema()
 
 class MembershipResource(Resource):
-    @jwt_required
+    #make an api for specific user ID to restrict user access to their own entries
+    @admin_required
     def get(self):
         memberships = Membership.query.all()
         memberships = memberships_schema.dump(memberships).data
@@ -18,14 +20,14 @@ class MembershipResource(Resource):
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+               return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = membership_schema.load(json_data)
         if errors:
             return errors, 422
         # membership = Membership.query.filter_by(name=data['name']).first()
         # if membership:
-        #     return {'message': 'Membership already exists'}, 400
+        #     return {'message': 'Membership already exists', 'error': 'true'}, 400
         membership = Membership(
             related_user_id=json_data['related_user_id'],
             related_account_id=json_data['related_account_id'],
@@ -41,18 +43,19 @@ class MembershipResource(Resource):
 
         return { "status": 'success', 'data': result }, 201
 
-    @jwt_required
+    #make an api for specific user ID to restrict user access to their own entries
+    @admin_required
     def put(self):
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+               return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = membership_schema.load(json_data)
         if errors:
             return errors, 422
         membership = Membership.query.filter_by(id=data['id']).first()
         if not membership:
-            return {'message': 'Membership does not exist'}, 400
+            return {'message': 'Membership does not exist', 'error': 'true'}, 400
         membership.related_user_id = data['related_user_id']
         membership.related_account_id = data['related_account_id']
         membership.related_role_id = data['related_role_id']
@@ -64,11 +67,12 @@ class MembershipResource(Resource):
 
         return { "status": 'success', 'data': result }, 204
 
-    @jwt_required
+    #make an api for specific user ID to restrict user access to their own entries
+    @admin_required
     def delete(self):
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+               return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = membership_schema.load(json_data)
         if errors:

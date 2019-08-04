@@ -28,7 +28,18 @@ class Home extends Component {
    
    componentDidMount() {
       //this.props.dispatch(userActions.getAll());
-      this.props.dispatch(userActions.refresh());
+      console.log(this.props);
+      if(!this.props.logFlag){
+         /*const requestOptions = {
+             method: 'GET',
+             //headers: authHeader()
+         };
+         return fetch('/fuck', requestOptions).then(function(response){
+            console.log(response);
+         });*/
+         //uncomment for refresh
+         this.props.dispatch(userActions.refresh());
+      }
    }
 
    handleChange(e) {
@@ -44,7 +55,7 @@ class Home extends Component {
          return;
       }
 
-      fetch('http://127.0.0.1:5000/api/Login', {
+      fetch('/api/Login', {
            method: 'POST',
            headers: {
                'Accept': 'application/json',

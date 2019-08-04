@@ -65,7 +65,7 @@ class SignUp extends Component {
                 ...txtFieldState,
                 fieldName: "Password",
                 required: true,
-                requiredTxt: "Password must be at least 12 characters and contain one uppercase letter, one lowercase letter, and one digit.",
+                requiredTxt: "Password must be at least 12 characters and contain one uppercase letter, one lowercase letter, one digit, and one special character.",
                 formatErrorTxt: "Incorrect password format",
                 type: "password",
                 pattern: "",
@@ -103,7 +103,7 @@ class SignUp extends Component {
             const { typeMismatch } = x.validity;
             const { name, type, value, pattern } = x;
             console.log("getting validity!",typeMismatch,x.checkValidity(),x.validationMessage);
-            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{12,})");
             var validFlag=true;
             if(type=='password'){
                 validFlag = strongRegex.test(value);
@@ -160,7 +160,7 @@ class SignUp extends Component {
             var postHeader = authHeader();
             postHeader['Accept'] = 'application/json';
             postHeader['Content-Type'] = 'application/json';
-            fetch('http://127.0.0.1:5000/api/User', {
+            fetch('/api/User', {
                 method: 'POST',
                 headers: postHeader,
                 body: JSON.stringify({
@@ -171,10 +171,12 @@ class SignUp extends Component {
                 })
             })
             .then((response) => {
-                if(!response.ok) throw new Error(response.status);
-                else return response.json();
+                return response.json();
             })
             .then((data) => {
+                if(data.error){
+                    throw Error(data.message);
+                }
                 console.log("DATA STORED",data);
                 const { username, password } = this.state;
                 const { dispatch } = this.props;
@@ -227,7 +229,7 @@ class SignUp extends Component {
     }
 
     /*getEntries() {
-        fetch('http://127.0.0.1:5000/api/Entry', {
+        fetch('/api/Entry', {
             method: 'GET',
             headers: authHeader()
         })

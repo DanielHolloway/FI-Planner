@@ -70,8 +70,17 @@ function refresh() {
 }
 
 function logout(username) {
-    userService.logout();
-    return { type: userConstants.LOGOUT };
+    return dispatch => {
+        userService.logout()
+                .then(
+                    user => dispatch(request(user)),
+                    error => { 
+                        dispatch(request(error));
+                        //dispatch(alertActions.error(error))
+                });
+    };
+
+    function request() { return { type: userConstants.LOGOUT } }
 }
 
 function getAll() {

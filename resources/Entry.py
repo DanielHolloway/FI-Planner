@@ -1,29 +1,15 @@
 from flask import request, g
 from flask_restful import Resource
 from Model import db, Entry, EntrySchema
-from flask_jwt_extended import (create_access_token, create_refresh_token, verify_jwt_in_request,
+from flask_jwt_extended import (create_access_token, create_refresh_token,
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
+from templates import admin_required
 
 entries_schema = EntrySchema(many=True)
 entry_schema = EntrySchema()
 
-from functools import wraps
-
-def admin_required(fn):
-    @wraps(fn)
-    def wrapper(*args, **kwargs):
-        verify_jwt_in_request()
-        print("hit admin_required!:",g.user)
-        return fn(*args, **kwargs)
-        # claims = get_jwt_claims()
-        # if claims['roles'] != 'admin':
-        #     return jsonify(msg='Admins only!'), 403
-        # else:
-        #     return fn(*args, **kwargs)
-    return wrapper
-
 class UserEntryResource(Resource):
-    @admin_required
+    @jwt_required
     def get(self, user_id):
         print("hit the get",user_id)
         entries = Entry.query.filter(Entry.related_user_id == user_id).all()
@@ -31,7 +17,7 @@ class UserEntryResource(Resource):
         return {'status': 'success', 'data': entries}, 200
 
 class EntryResource(Resource):
-    @jwt_required
+    @admin_required
     def get(self):
         print("hit the get")
         entries = Entry.query.all()
@@ -42,14 +28,14 @@ class EntryResource(Resource):
     def post(self):
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+               return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = entry_schema.load(json_data)
         if errors:
             return errors, 422
         # entry = Entry.query.filter_by(name=data['name']).first()
         # if entry:
-        #     return {'message': 'Entry already exists'}, 400
+        #     return {'message': 'Entry already exists', 'error': 'true'}, 400
         entry = Entry(
             name=json_data['name'],
             category=json_data['category'],
@@ -65,18 +51,19 @@ class EntryResource(Resource):
 
         return { "status": 'success', 'data': result }, 201
 
-    @jwt_required
+    #make a specific put for specific user ID to restrict user access to their own entries
+    @admin_required
     def put(self):
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+               return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = entry_schema.load(json_data)
         if errors:
             return errors, 422
         entry = Entry.query.filter_by(id=data['id']).first()
         if not entry:
-            return {'message': 'Entry does not exist'}, 400
+            return {'message': 'Entry does not exist', 'error': 'true'}, 400
         entry.name = data['name']
         entry.category = data['category']
         entry.month = data['month']
@@ -88,11 +75,12 @@ class EntryResource(Resource):
 
         return { "status": 'success', 'data': result }, 204
 
-    @jwt_required
+    #make an api for specific user ID to restrict user access to their own entries
+    @admin_required
     def delete(self):
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided'}, 400
+               return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = entry_schema.load(json_data)
         if errors:

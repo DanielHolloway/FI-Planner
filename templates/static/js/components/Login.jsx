@@ -21,7 +21,7 @@ export default class Login extends Component {
 
     checkLogin(e) {
         e.preventDefault();
-        fetch('http://127.0.0.1:5000/api/Login', {
+        fetch('/api/Login', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

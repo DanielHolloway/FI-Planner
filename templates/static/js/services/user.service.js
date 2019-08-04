@@ -57,25 +57,34 @@ function refresh() {
 
 function logout() {
     const requestOptions = {
-        method: 'POST',
+        method: 'DELETE',
         headers: authHeader(),
         body: JSON.stringify({
             user_name: 'username'
         })
     };
 
-    fetch('/logout', requestOptions)
-        .then(function(response) {            
+    return fetch('/api/Token', requestOptions)
+        .then(handleResponseNoLogout)
+        .then(user => {
+            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            console.log("stringifying this user: ", user);
+            sessionStorage.removeItem('user');
+
+            return user;
+        });
+        /*.then(function(response) {   
+            console.log(response);         
             response.text().then(text => {
                 const data = text && JSON.parse(text);
                 console.log("GOT THIS RESPONSE: ",response,data);
                       
-                    // remove user from local storage to log user out
-                    sessionStorage.removeItem('user');
-                
+                // remove user from local storage to log user out
+                sessionStorage.removeItem('user');
+                return response;
 
             });
-        });
+        });*/
 }
 
 function getAll() {

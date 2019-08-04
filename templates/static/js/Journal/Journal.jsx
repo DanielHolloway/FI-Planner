@@ -142,7 +142,7 @@ class Journal extends Component {
             var postHeader = authHeader();
             postHeader['Accept'] = 'application/json';
             postHeader['Content-Type'] = 'application/json';
-            fetch('http://127.0.0.1:5000/api/Entry', {
+            fetch('/api/Entry', {
                 method: 'POST',
                 headers: postHeader,
                 body: JSON.stringify({
@@ -194,7 +194,7 @@ class Journal extends Component {
     }
 
     getEntries() {
-        const targetUrl = 'http://127.0.0.1:5000/api/Entry/'+this.props.user.id;
+        const targetUrl = '/api/Entry/'+this.props.user.id;
         fetch(targetUrl, {
             method: 'GET',
             headers: authHeader()
