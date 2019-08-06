@@ -183,3 +183,8 @@ h3.customFont {
 .error-color {
     color: mediumpurple;
 }
+
+.w-50-header {
+    width: 50%;
+    max-width: 30rem;
+}
