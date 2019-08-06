@@ -29,6 +29,11 @@ I got stuck because I didn't know to add "--log-level debug" to my gunicorn bind
 I ended up needing to add "EnvironmentFile" to my fi-planner.service gunicorn file so that it could get the secrets
 Also, I had to update my method for pulling user IP's to get it from the Nginx request header
 
+Logging into Amazon LightSail:
+chmod 400 <pem file>
+ssh-add <pem file>
+ssh <user>@<address>
+
 To re-enter the virtual Python environment: .\env\Scripts\activate
 .\static> npm run watch (or npm run build)
 In root, do: py run.py
