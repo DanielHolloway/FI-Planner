@@ -8,6 +8,7 @@ from flask_login import LoginManager, current_user
 from flask_jwt_extended import (JWTManager, get_jwt_identity, get_raw_jwt, jwt_required, jwt_refresh_token_required,
                                 create_access_token, verify_jwt_in_request, set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
 from functools import wraps
+import logging
 
 
 ip_ban_list = []
@@ -16,7 +17,7 @@ def fresh_admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_fresh_jwt_in_request()
-        print("hit admin_required!:",g.user.related_role_id)
+        print("hit fresh admin_required!:",g.user.related_role_id)
         if(g.user.related_role_id != 1):  #NOT ADMIN UNLESS ROLE ID IS 1
             return {'message': 'Lacking the proper role', 'error': 'true'}, 400
         else:
@@ -38,6 +39,10 @@ def create_app(config_filename):
     app = Flask(__name__,
         static_folder = './public',
         template_folder="./static")
+
+    logging.basicConfig(filename='fiplanner.log',
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
     @app.before_request
     def debug_print():
@@ -210,6 +215,7 @@ def create_app(config_filename):
         if val is not None:
             present = datetime.datetime.utcnow()
             if val > present:
+                app.logger.warning('Blocked request from blacklist')
                 #print("VALID DATE!!",val,present)
                 abort(403)
 

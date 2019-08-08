@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app
 from flask_restful import Resource
 from Model import db, Membership, MembershipSchema
 from flask_jwt_extended import (create_access_token, create_refresh_token,
@@ -12,18 +12,22 @@ class MembershipResource(Resource):
     #make an api for specific user ID to restrict user access to their own entries
     @admin_required
     def get(self):
+        current_app.logger.info('Processing Membership GET')
         memberships = Membership.query.all()
         memberships = memberships_schema.dump(memberships).data
         return {'status': 'success', 'data': memberships}, 200
 
     @jwt_required
     def post(self):
+        current_app.logger.info('Processing Membership POST')
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided', 'error': 'true'}, 400
+            current_app.logger.error('No input data given to Membership POST')
+            return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = membership_schema.load(json_data)
         if errors:
+            current_app.logger.error('Bad data given to Membership POST')
             return errors, 422
         # membership = Membership.query.filter_by(name=data['name']).first()
         # if membership:
@@ -41,20 +45,25 @@ class MembershipResource(Resource):
 
         result = membership_schema.dump(membership).data
 
+        current_app.logger.info('Successful Membership POST')
         return { "status": 'success', 'data': result }, 201
 
     #make an api for specific user ID to restrict user access to their own entries
     @admin_required
     def put(self):
+        current_app.logger.info('Processing Membership PUT')
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided', 'error': 'true'}, 400
+            current_app.logger.error('No input data given to Membership PUT')
+            return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = membership_schema.load(json_data)
         if errors:
+            current_app.logger.error('Bad data given to Membership PUT')
             return errors, 422
         membership = Membership.query.filter_by(id=data['id']).first()
         if not membership:
+            current_app.logger.error('Selection not found in Membership PUT')
             return {'message': 'Membership does not exist', 'error': 'true'}, 400
         membership.related_user_id = data['related_user_id']
         membership.related_account_id = data['related_account_id']
@@ -65,21 +74,26 @@ class MembershipResource(Resource):
 
         result = membership_schema.dump(membership).data
 
+        current_app.logger.info('Successful Membership PUT')
         return { "status": 'success', 'data': result }, 204
 
     #make an api for specific user ID to restrict user access to their own entries
     @admin_required
     def delete(self):
+        current_app.logger.info('Processing Membership DELETE')
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided', 'error': 'true'}, 400
+            current_app.logger.error('No input data given to Membership DELETE')
+            return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = membership_schema.load(json_data)
         if errors:
+            current_app.logger.error('Bad data given to Membership PUT')
             return errors, 422
         membership = Membership.query.filter_by(id=data['id']).delete()
         db.session.commit()
 
         result = membership_schema.dump(membership).data
 
+        current_app.logger.info('Successful Membership DELETE')
         return { "status": 'success', 'data': result}, 204

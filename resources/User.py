@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, current_app
 from flask_restful import Resource
 from Model import db, User, UserSchema, Login, LoginSchema, Membership, MembershipSchema
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,24 +17,29 @@ class UserResource(Resource):
     #removed jwt gate so that Redux works
     # @jwt_required
     def get(self):
+        current_app.logger.info('Processing User GET')
         users = User.query.all()
         users = users_schema.dump(users).data
         return {'status': 'success', 'data': users}, 200
 
     # @jwt_required
     def post(self):
+        current_app.logger.info('Processing User POST')
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided', 'error': 'true'}, 400
+            current_app.logger.error('No input data given to User POST')
+            return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         password_hash = generate_password_hash(json_data['password_hash'], method='pbkdf2:sha512:100001')
         json_data['password_hash'] = ""
 
         data, errors = user_schema.load(json_data)
         if errors:
+            current_app.logger.error('Bad data given to User POST')
             return errors, 422
         user = User.query.filter_by(user_name=data['user_name']).first()
         if user:
+            current_app.logger.error('Username already taken in User POST')
             return {'message': 'User already exists', 'error': 'true'}, 400
         user = User(
             first_name=json_data['first_name'],
@@ -53,9 +58,11 @@ class UserResource(Resource):
         data, errors = login_schema.load(user_login)
         print("data and errors: ",data,errors)
         if errors:
+            current_app.logger.error('Bad Login data given to User POST')
             return errors, 422
         login = Login.query.filter_by(user_name=data['user_name']).first()
         if login:
+            current_app.logger.error('Username at Login is already taken in User POST')
             return {'message': 'Login already exists', 'error': 'true'}, 400
         login = Login(
             related_user_id=user_login['related_user_id'],
@@ -74,6 +81,7 @@ class UserResource(Resource):
         data, errors = membership_schema.load(user_membership)
         print("data and errors: ",data,errors)
         if errors:
+            current_app.logger.error('Bad Membership data given to User POST')
             return errors, 422
         # membership = Membership.query.filter_by(name=data['name']).first()
         # if membership:
@@ -106,15 +114,19 @@ class UserResource(Resource):
     #make an api for specific user ID to restrict user access to their own entries
     @fresh_admin_required
     def put(self):
+        current_app.logger.info('Processing User PUT')
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided', 'error': 'true'}, 400
+            current_app.logger.error('No input data given to User PUT')
+            return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = user_schema.load(json_data)
         if errors:
+            current_app.logger.error('Bad data given to User PUT')
             return errors, 422
         user = User.query.filter_by(id=data['id']).first()
         if not user:
+            current_app.logger.error('Selection not found in User PUT')
             return {'message': 'User does not exist', 'error': 'true'}, 400
         user.first_name = data['first_name']
         user.last_name = data['last_name']
@@ -123,21 +135,26 @@ class UserResource(Resource):
 
         result = user_schema.dump(user).data
 
+        current_app.logger.info('Successful User PUT')
         return { "status": 'success', 'data': result }, 204
 
     #make an api for specific user ID to restrict user access to their own entries
     @fresh_admin_required
     def delete(self):
+        current_app.logger.info('Processing User DELETE')
         json_data = request.get_json(force=True)
         if not json_data:
-               return {'message': 'No input data provided', 'error': 'true'}, 400
+            current_app.logger.error('No input data given to User DELETE')
+            return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         data, errors = user_schema.load(json_data)
         if errors:
+            current_app.logger.error('Bad data given to User DELETE')
             return errors, 422
         user = User.query.filter_by(id=data['id']).delete()
         db.session.commit()
 
         result = user_schema.dump(user).data
 
+        current_app.logger.info('Successful User DELETE')
         return { "status": 'success', 'data': result}, 204
