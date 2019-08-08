@@ -186,9 +186,11 @@ To-do list:
 
         10. Activity logging
             By IP address, page, and actions
+            Done for API's and blacklist on 8/7
         DB encryption?
         What else? Check with OWASP and DWVA
     Hosted on AWS 
         - will probably need Ubuntu 18.04 or some other Linux for Memcached (blacklist) functionality
+        Done with Amazon LightSail on 8/5 and got HTTPS cert working
 
     Metrics page
