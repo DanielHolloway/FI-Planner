@@ -129,9 +129,15 @@ To-do list:
     Cookie freshness check for sensitive endpoints on 8/3
     Implemented basic user roles on 8/3
     Activity logging for API's and blacklist on 8/7
+    Listed and organized architecture components and took photo on 8/12
     SMS verification on 8/12
 
     ### FEATURES ###
+    Add API error messages to React forms
+    Ensure that users can't use site without being text-verified
+        - add in /api/Login so that cookies aren't granted without it
+            - done, but still need to re-issue text and re-direct to verify page
+        - make the Verify page look better
     Mobile responsiveness
     DB encryption
     Metrics page

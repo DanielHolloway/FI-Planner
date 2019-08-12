@@ -38,6 +38,9 @@ class LoginRefreshResource(Resource):
         if not user_membership:
             current_app.logger.error('Membership not found in LoginRefresh POST')
             return {'message': 'Refresh membership does not exist', 'error': 'true'}, 400
+        if user_membership.verified != 1:
+            current_app.logger.error('Membership not verified in LoginRefresh POST')
+            return {'message': 'Account must be verified before login', 'error': 'true'}, 400
         user_id.related_role_id = user_membership.related_role_id
         login_user(user_id)
         print("g's role is now",g.user.related_role_id)
@@ -120,6 +123,9 @@ class LoginResource(Resource):
                     if not user_membership:
                         current_app.logger.error('Membership not found in Login POST')
                         return {'message': 'Login membership does not exist', 'error': 'true'}, 400
+                    if user_membership.verified != 1:
+                        current_app.logger.error('Membership not verified in Login POST')
+                        return {'message': 'Account must be verified before login', 'error': 'true'}, 400
                     login_user(user_id)
                     resp = jsonify({
                         'login': True,
