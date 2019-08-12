@@ -117,14 +117,31 @@ To-do list:
     Re-structure API's - done on 7/7
         Added for Entry and User on 7/6
         Comment, Category, User, Login, Membership, Account, Entry done on 7/7
+    Hosted on AWS 
+        - will probably need Ubuntu 18.04 or some other Linux for Memcached (blacklist) functionality
+        Done with Amazon LightSail on 8/5 and got HTTPS cert working
+    React input validation - finished home and journal input validation on 7/26
+    Output encoding (for HTML outputs) - done on 7/26
+    Locked bad login attempts on 7/27
+    Good password habits - done on 7/28
+    Locked up all API's and finished initial redirects on 7/26
+    12-100 alpha-numeric passwords - fixed on 8/3
+    Cookie freshness check for sensitive endpoints on 8/3
+    Implemented basic user roles on 8/3
+    Activity logging for API's and blacklist on 8/7
+    SMS verification on 8/12
+
+    ### FEATURES ###
+    Mobile responsiveness
+    DB encryption
+    Metrics page
 
     ### BUGS ###
     Old JWT's cause "UNPROCESSABLE ENTITY" when hitting "GET api/Entry". Need to fix old JWT's: use refresher token and refresh the old ones
 
-    ### FEATURES ###
-    Mobile responsiveness
-    Figure out checklist for deployment:
-        ### This whole list needs to be constantly reviewed as new features are added ###
+
+    ### GENERAL SECURITY CHECKLIST ###
+    ### This whole list needs to be constantly reviewed as new features are added ###
         0. Reference: https://martinfowler.com/articles/web-security-basics.html
         1. User/API auth and protection - JWT done on 7/21, need to cascade
             How to authenticate user logins before successful password check?
@@ -159,6 +176,7 @@ To-do list:
                     Restart memcached, change to start/stop as needed: sudo systemctl restart memcached
                     Check for "memcached" on correct IP: sudo netstat -plunt
                     Check for specific memcached stats: memcstat --servers="<correct IP>"
+            Did SMS verification on 8/12
         8. Session Management
             Look into safe session management for JWT's (article only talked about cookies)
             https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/JSON_Web_Token_Cheat_Sheet_for_Java.md
@@ -168,29 +186,20 @@ To-do list:
             First draft of session management done on 7/29
             remove refresh token upon logout? (using the blacklist?) - done on 8/3, didn't need blacklist
             started to implement freshness check for sensitive endpoints on 8/3
-
-
         9. Authorize Actions
             Based on a user's role, map the correct permissions "upstream". Called Role Based Access Control (RBAC)
             To ensure consistent user auth, set Cache-Control header to "private, no-cache, no-store"
             Reference: https://medium.com/bluecore-engineering/implementing-role-based-security-in-a-web-app-89b66d1410e4
                 Flask-specific: https://www.reddit.com/r/flask/comments/2uovxs/af_manage_roles_in_rest_api/
             Strategy is Role Based Security: make parent resources to group child resources, make roles to contain permissions, and make user groups to contain individual users. Then grant roles to user groups to access different parent or child resources
-            
-            Membership.related_role_id meanings:
-                1 = admin
-                2 = user
-                3 = guest
-
-            Restrict user's access to only their own info in API's unless admin
-
+                Membership.related_role_id meanings:
+                    1 = admin
+                    2 = user
+                    3 = guest
+            Restrict user's access to only their own info in API's unless admin - done on 8/3
         10. Activity logging
             By IP address, page, and actions
             Done for API's and blacklist on 8/7
-        DB encryption?
         What else? Check with OWASP and DWVA
-    Hosted on AWS 
-        - will probably need Ubuntu 18.04 or some other Linux for Memcached (blacklist) functionality
-        Done with Amazon LightSail on 8/5 and got HTTPS cert working
 
-    Metrics page
+

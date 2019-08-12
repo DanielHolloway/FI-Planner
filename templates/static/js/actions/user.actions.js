@@ -4,11 +4,36 @@ import { alertActions } from './';
 import { history } from '../helpers';
 
 export const userActions = {
+    verify,
     login,
     refresh,
     logout,
     getAll
 };
+
+function verify(user) {
+    return dispatch => {
+        dispatch(request({ user }));
+
+        userService.verify(user);
+        dispatch(success(user));
+        history.push('/');
+            /*.then(
+                user => { 
+                    dispatch(success(user));
+                    history.push('/');
+                },
+                error => {
+                    dispatch(failure(error));
+                    dispatch(alertActions.error(error));
+                }
+            );*/
+    };
+
+    function request(user) { return { type: userConstants.VERIFY_REQUEST, user } }
+    function success(user) { return { type: userConstants.VERIFY_SUCCESS, user } }
+    function failure(error) { return { type: userConstants.VERIFY_FAILURE, error } }
+}
 
 function login(username, password) {
     return dispatch => {

@@ -103,9 +103,11 @@ class LoginResource(Resource):
 
         #ip = request.environ.get('REMOTE_ADDR')
         ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr) 
+        print("ID is",user_id)
         if user_id:
             # print("ID is",user_id.id)
             login = Login.query.filter_by(related_user_id=user_id.id).first()
+            print("login is",login.password_hash,json_data['password_hash'])
             if login:
                 if check_password_hash(login.password_hash, json_data['password_hash']):
                     print("found user in login: ",data);

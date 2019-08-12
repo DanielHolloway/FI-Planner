@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import LoginForm from './LoginForm';
+import VerifyForm from './VerifyForm';
 import Header from '../components/Header';
 import PhotoCred from '../components/PhotoCred';
 
 import { authHeader } from '../helpers';
-
 
 import { userActions } from '../actions';
 
@@ -18,67 +17,17 @@ const txtFieldState = {
     errMsg: "" //this is where our error message gets across
 };
 
-class SignUp extends Component {
+class Verify extends Component {
     constructor() {
         super();
         this.state = {
-            first_name: {
+            code: {
                 ...txtFieldState,
-                fieldName: "First name",
+                fieldName: "Verification code",
                 required: true,
-                requiredTxt: "First name is required",
-                formatErrorTxt: "Incorrect first name format",
-                type: "text",
-                pattern: "",
-                value: ''
-            },
-            last_name: {
-                ...txtFieldState,
-                fieldName: "Last name",
-                required: true,
-                requiredTxt: "Last name is required",
-                formatErrorTxt: "Incorrect last name format",
-                type: "text",
-                pattern: "",
-                value: ''
-            },
-            username: {
-                ...txtFieldState,
-                fieldName: "Username",
-                required: true,
-                requiredTxt: "Username is required",
-                formatErrorTxt: "Incorrect username format",
-                type: "text",
-                pattern: "",
-                value: ''
-            },
-            phonenumber: {
-                ...txtFieldState,
-                fieldName: "Phone number",
-                required: true,
-                requiredTxt: "Phone number is required",
-                formatErrorTxt: "Incorrect telephone format",
-                type: "tel",
-                pattern: "",
-                value: ''
-            },
-            /* do email later
-            email: {
-                ...txtFieldState,
-                fieldName: "Email",
-                required: true,
-                requiredTxt: "Email is required",
-                formatErrorTxt: "Incorrect email format",
-                type: "email",
-                value: ''
-            },*/
-            password: {
-                ...txtFieldState,
-                fieldName: "Password",
-                required: true,
-                requiredTxt: "Password must be at least 12 characters and contain one uppercase letter, one lowercase letter, one digit, and one special character.",
-                formatErrorTxt: "Incorrect password format",
-                type: "password",
+                requiredTxt: "Code is required",
+                formatErrorTxt: "Incorrect code format",
+                type: "number",
                 pattern: "",
                 value: ''
             },
@@ -165,21 +114,17 @@ class SignUp extends Component {
         .some(field => !field.valid);
     };
 
-    postUser() {
+    postCode() {
         console.log("posting this!",this.state);
         if(this.state.allFieldsValid){
             var postHeader = authHeader();
             postHeader['Accept'] = 'application/json';
             postHeader['Content-Type'] = 'application/json';
-            fetch('/api/User', {
+            fetch('/api/Verify', {
                 method: 'POST',
                 headers: postHeader,
                 body: JSON.stringify({
-                    first_name: this.state.first_name.value,
-                    last_name: this.state.last_name.value,
-                    user_name: this.state.username.value,
-                    phone: this.state.phonenumber.value,
-                    password_hash: this.state.password.value
+                    code: this.state.code.value
                 })
             })
             .then((response) => {
@@ -189,34 +134,21 @@ class SignUp extends Component {
                 if(data.error){
                     throw Error(data.message);
                 }
-                console.log("DATA STORED",data,this.props);
-                const { history } = this.props;
-                history.push('/verify');
-                // const { username, password } = this.state;
-                // const { dispatch } = this.props;
-                // console.log(username,password,this.props);
-                // if (username.value && password.value) {
-                //    dispatch(userActions.login(username.value, password.value));
-                // }
+                console.log("DATA STORED",data);
+                //const { username, password } = this.state;
+                const user = {
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    user_name: data.user_name
+                }
+                const { dispatch } = this.props;
+                console.log(user,this.props);
+                if (user.user_name) {
+                   dispatch(userActions.verify(user));
+                }
                 this.state = {
-                    first_name: {
-                        ...this.state[first_name],
-                        value: ''
-                    },
-                    last_name: {
-                        ...this.state[last_name],
-                        value: ''
-                    },
-                    username: {
-                        ...this.state[username],
-                        value: ''
-                    },
-                    phonenumber: {
-                        ...this.state[phonenumber],
-                        value: ''
-                    },
-                    password: {
-                        ...this.state[password],
+                    code: {
+                        ...this.state[code],
                         value: ''
                     },
                     allFieldsValid: false
@@ -236,38 +168,14 @@ class SignUp extends Component {
         const allFieldsValid = this.checkAllFieldsValid(formValues);
         
         console.log(allFieldsValid);
-        this.setState({ ...formValues, allFieldsValid }, this.postUser); //we set the state based on the extracted values from Constraint Validation API
+        this.setState({ ...formValues, allFieldsValid }, this.postCode); //we set the state based on the extracted values from Constraint Validation API
         
     };
 
     submitEntry(e) {
         e.preventDefault();
-        //hard-coded the related_user_id until I develop user authentication
         this.validateSubmit(e.target);
     }
-
-    /*getEntries() {
-        fetch('/api/Entry', {
-            method: 'GET',
-            headers: authHeader()
-        })
-        .then(results => {
-            return results.json();
-        }).then(data => {
-            let shmeats = this.buildTable(data.data);
-            this.setState({shmeats: shmeats});
-        });
-    }
-
-    buildTable(input) {
-        return (
-            <EntryTable entries={input} key={'entries-'+input.length} />
-        )
-    }
-
-    componentDidMount() {
-        this.getEntries();
-    }*/
 
     render() {
         return (
@@ -281,11 +189,11 @@ class SignUp extends Component {
                             <div className="h-100 w-100 d-flex align-items-center mt-5">
                                 <div className="d-flex flex-row h-100 w-100 flex-even align-items-baseline">
                                     <div className="w-50">
-                                        <LoginForm 
+                                        <VerifyForm 
                                             value={this.state}
                                             handleInputChange={this.handleInputChange}
                                             submitEntry={this.submitEntry}
-                                            key="login-form" 
+                                            key="verify-form" 
                                         />
                                     </div>
                                 </div>
@@ -313,5 +221,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedSignUp = connect(mapStateToProps)(SignUp);
-export { connectedSignUp as SignUp };
+const connectedVerify = connect(mapStateToProps)(Verify);
+export { connectedVerify as Verify };

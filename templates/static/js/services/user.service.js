@@ -2,11 +2,25 @@
 import { authHeader, authHeaderRefresh } from '../helpers';
 
 export const userService = {
+    verify,
     login,
     refresh,
     logout,
     getAll
 };
+
+function verify(user) {
+    const userUpdate = {
+        'login': 'True',
+        'message': 'Login successful',
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'user_name': user.user_name
+    }
+    sessionStorage.setItem('user', JSON.stringify(userUpdate));
+    return userUpdate;
+
+}
 
 function login(username, password) {
     console.log("ooo baby");
@@ -73,18 +87,6 @@ function logout() {
 
             return user;
         });
-        /*.then(function(response) {   
-            console.log(response);         
-            response.text().then(text => {
-                const data = text && JSON.parse(text);
-                console.log("GOT THIS RESPONSE: ",response,data);
-                      
-                // remove user from local storage to log user out
-                sessionStorage.removeItem('user');
-                return response;
-
-            });
-        });*/
 }
 
 function getAll() {

@@ -12,6 +12,19 @@ const initialState = user ? { loggedIn: true, user } : {};
 
 export function authentication(state = initialState, action) {
     switch (action.type) {
+    case userConstants.VERIFY_REQUEST:
+        return {
+        loggingIn: true,
+        user: action.user
+        };
+    case userConstants.VERIFY_SUCCESS:
+        console.log(action.user);
+        return {
+        loggedIn: true,
+        user: action.user
+        };
+    case userConstants.VERIFY_FAILURE:
+        return {};
     case userConstants.LOGIN_REQUEST:
         return {
         loggingIn: true,
@@ -25,15 +38,18 @@ export function authentication(state = initialState, action) {
         };
     case userConstants.LOGIN_FAILURE:
         return {};
-    case userConstants.USERS_REFRESH_REQUEST:
-        return {};
-    case userConstants.USERS_REFRESH_SUCCESS:
+    case userConstants.REFRESH_REQUEST:
+        return {
+        loggingIn: true,
+        user: action.user
+        };
+    case userConstants.REFRESH_SUCCESS:
         console.log(action.user);
         return {
         loggedIn: true,
         user: action.user
         };
-    case userConstants.USERS_REFRESH_FAILURE:
+    case userConstants.REFRESH_FAILURE:
         return {};
     case userConstants.LOGOUT:
         return {};

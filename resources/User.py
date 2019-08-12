@@ -1,17 +1,131 @@
-from flask import request, current_app
+from flask import request, current_app, session, jsonify
 from flask_restful import Resource
 from Model import db, User, UserSchema, Login, LoginSchema, Membership, MembershipSchema
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user
-from flask_jwt_extended import (create_access_token, create_refresh_token,
+from flask_jwt_extended import (create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, 
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
 from templates import admin_required, fresh_admin_required
 import json
+from twilio.rest import Client
+
+# Initialize Twilio client
+client = Client()
 
 users_schema = UserSchema(many=True)
 user_schema = UserSchema()
 login_schema = LoginSchema()
 membership_schema = MembershipSchema()
+
+def userVerified(login):
+    current_app.logger.info('Verified user in Verify PUT')
+    print("userVerified: ",login.user_name);
+    access_token = create_access_token(identity=login.user_name, fresh=True)
+    refresh_token = create_refresh_token(identity=login.user_name)
+    # Set the JWTs and the CSRF double submit protection cookies
+    # in this response
+    user_id = User.query.filter_by(id=login.related_user_id).first()
+    user_membership = Membership.query.filter_by(related_user_id=user_id.id).first()
+    user_id.related_role_id = user_membership.related_role_id
+    if not user_membership:
+        current_app.logger.error('Membership not found in Login POST')
+        return {'message': 'Login membership does not exist', 'error': 'true'}, 400
+    login_user(user_id)
+    print("about to jsonify in UserVerified")
+    resp = jsonify({
+        'login': True,
+        'message': 'Login successful',
+        'first_name': user_id.first_name,
+        'last_name': user_id.last_name,
+        'user_name': user_id.user_name,
+        'id': user_id.id,
+        })
+    print("about to set cookies",resp)
+    set_access_cookies(resp, access_token)
+    set_refresh_cookies(resp, refresh_token)
+    # clear the failed login counter
+    #print("trying to set this ip in memcached:",ip,flush=True)
+    #client.set(ip, 0)
+    print("about to return resp from userVerified")
+    resp.status_code = 200
+    return resp
+
+def start_verification(to):
+    channel = 'sms'
+
+    service = current_app.config.get("VERIFICATION_SID")
+
+    verification = client.verify \
+        .services(service) \
+        .verifications \
+        .create(to=to, channel=channel)
+    
+    #REDIRECT TO VERIFY PAGE FOR CODE ENTRY
+    return verification.sid
+
+
+def check_verification(phone, code):
+    service = current_app.config.get("VERIFICATION_SID")
+    
+    try:
+        verification_check = client.verify \
+            .services(service) \
+            .verification_checks \
+            .create(to=phone, code=code)
+
+        current_app.logger.info(verification_check)
+        if verification_check.status == "approved":
+            membership = Membership.query.filter_by(account_phone_number=phone).first()
+            if not membership:
+                current_app.logger.error('Phone number not found in Verify PUT')
+                return {'message': 'Membership does not exist', 'error': 'true'}, 400
+            # membership.related_user_id = data['related_user_id']
+            # membership.related_account_id = data['related_account_id']
+            # membership.related_role_id = data['related_role_id']
+            # membership.account_email_address = data['account_email_address']
+            # membership.account_phone_number = data['account_phone_number']
+            membership.verified = 1
+            db.session.commit()
+            result = membership_schema.dump(membership).data
+            
+            print("Got this result after membership dump:",result)
+
+            login = Login.query.filter_by(related_user_id=result['related_user_id']).first()
+            if not login:
+                current_app.logger.error('User not found after Verify PUT')
+                return {'message': 'User not found', 'error': 'true'}, 400
+    
+            
+
+            result = login_schema.dump(login).data
+
+            print("got this login object:",login,"and this result:",result)
+            
+            current_app.logger.info('Successful Verify PUT')
+            return userVerified(login)
+            # return { "status": 'success', 'data': result }, 201
+        
+        else:
+            current_app.logger.error('Bad code given to Verify PUT')
+            return { "status": 'failure' }, 422
+    except Exception as errors:
+        current_app.logger.error('Bad data given to Verify PUT')
+        return errors, 422
+
+    #return redirect(url_for('auth.verify'))
+
+class UserVerifyResource(Resource):
+    #@jwt_required
+    def post(self):
+        current_app.logger.info('Processing Verify POST')
+        json_data = request.get_json(force=True)
+        if not json_data:
+            current_app.logger.error('No input data given to Verify POST')
+            return {'message': 'No input data provided', 'error': 'true'}, 400
+        # Validate and deserialize input
+        phone = session.get('phone')
+        code = json_data['code']
+        return check_verification(phone, code)
 
 class UserResource(Resource):
     #removed jwt gate so that Redux works
@@ -32,6 +146,9 @@ class UserResource(Resource):
         # Validate and deserialize input
         password_hash = generate_password_hash(json_data['password_hash'], method='pbkdf2:sha512:100001')
         json_data['password_hash'] = ""
+
+        phone = json_data['phone']
+
 
         data, errors = user_schema.load(json_data)
         if errors:
@@ -76,10 +193,18 @@ class UserResource(Resource):
         login_result = login_schema.dump(login).data
 
         # default related_role_id to 2
-        user_membership = {"related_user_id": result['id'], "related_account_id": 0, "related_role_id": 2, "account_email_address": "sugon@deez.nutz", "account_phone_number": ""}
+        user_membership = {"related_user_id": result['id'], "related_account_id": 0, "related_role_id": 2, "account_email_address": "sugon@deez.nutz", "account_phone_number": phone}
+
+        session['phone'] = phone
+        vsid = start_verification(phone)
+
+        if vsid is None:
+            current_app.logger.error('Bad phone verification in User POST')
+            return {'message': 'Bad phone verification', 'error': 'true'}, 400
 
         data, errors = membership_schema.load(user_membership)
         print("data and errors: ",data,errors)
+
         if errors:
             current_app.logger.error('Bad Membership data given to User POST')
             return errors, 422
@@ -91,7 +216,8 @@ class UserResource(Resource):
             related_account_id=user_membership['related_account_id'],
             related_role_id=user_membership['related_role_id'],
             account_email_address=user_membership['account_email_address'],
-            account_phone_number=user_membership['account_phone_number']
+            account_phone_number=user_membership['account_phone_number'],
+            verified=0
             )
 
         db.session.add(membership)

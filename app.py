@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api
-from resources.User import UserResource
+from resources.User import UserResource, UserVerifyResource
 from resources.Login import LoginResource, LoginRefreshResource
 from resources.Account import AccountResource
 from resources.Membership import MembershipResource
@@ -12,6 +12,7 @@ api = Api(api_bp)
 
 # Route
 api.add_resource(UserResource, '/User')
+api.add_resource(UserVerifyResource, '/Verify')
 api.add_resource(LoginResource, '/Login')
 api.add_resource(LoginRefreshResource, '/Token')
 api.add_resource(AccountResource, '/Account')

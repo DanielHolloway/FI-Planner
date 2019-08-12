@@ -76,15 +76,17 @@ class Membership(db.Model):
     related_account_id = db.Column(db.Integer, db.ForeignKey('accounts.id', ondelete='CASCADE'), nullable=False)
     related_role_id = db.Column(db.Integer)
     account_email_address = db.Column(db.String(150), nullable=False)
-    account_phone_number = db.Column(db.String(16), nullable=False)
+    account_phone_number = db.Column(db.String(40), unique=True, nullable=False)
+    verified = db.Column(db.Integer, default=0, nullable=False)
     user = db.relationship('User', backref=db.backref('memberships', lazy='dynamic' ))
 
-    def __init__(self, related_user_id, related_account_id, related_role_id, account_email_address, account_phone_number):
+    def __init__(self, related_user_id, related_account_id, related_role_id, account_email_address, account_phone_number, verified):
         self.related_user_id = related_user_id
         self.related_account_id = related_account_id
         self.related_role_id = related_role_id
         self.account_email_address = account_email_address
         self.account_phone_number = account_phone_number
+        self.verified = verified
 
 class MembershipSchema(ma.Schema):
     id = fields.Integer(dump_only=True)
@@ -93,6 +95,7 @@ class MembershipSchema(ma.Schema):
     related_role_id = fields.Integer()
     account_email_address = fields.String(required=True)
     account_phone_number = fields.String()
+    verified = fields.Integer()
     
 class Entry(db.Model):
     __tablename__ = 'entries'

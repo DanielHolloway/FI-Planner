@@ -8,6 +8,7 @@ from flask_login import LoginManager, current_user
 from flask_jwt_extended import (JWTManager, get_jwt_identity, get_raw_jwt, jwt_required, jwt_refresh_token_required,
                                 create_access_token, verify_jwt_in_request, set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
 from functools import wraps
+from dotenv import load_dotenv, find_dotenv
 import logging
 
 
@@ -44,14 +45,13 @@ def create_app(config_filename):
     level=logging.DEBUG,
     format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
-    @app.before_request
-    def debug_print():
-        print("SUGONDESENUTZ",flush=True)
     @app.route("/fuck")
     def hello():
         print("we're starting")
         resp = jsonify({'logout': True})
         return resp, 200
+
+    load_dotenv(find_dotenv())
 
     #@app.before_first_request
     #def init_configs():
@@ -65,7 +65,9 @@ def create_app(config_filename):
     app.config['JWT_COOKIE_SECURE'] = False
     app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
     app.config['JWT_REFRESH_COOKIE_PATH'] = '/api/Token'
-
+    # Twilio verify key        
+    app.config['VERIFICATION_SID'] = os.environ.get('VERIFICATION_SID')
+    
     # Enable csrf double submit protection. See this for a thorough
     # explanation: http://www.redotheweb.com/2015/11/09/api-security.html
     app.config['JWT_COOKIE_CSRF_PROTECT'] = True
@@ -74,7 +76,7 @@ def create_app(config_filename):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     project_dir = os.path.dirname(os.path.abspath(__file__))
     p = Path(project_dir).parents[0]
-    database_file = "sqlite:///{}".format(os.path.join(p, "comments.db"))
+    database_file = "sqlite:///{}".format(os.path.join(p, "fiplanner.db"))
     app.config['SQLALCHEMY_DATABASE_URI'] = database_file
 
 
@@ -148,22 +150,6 @@ def create_app(config_filename):
     def failed_user_claim_verification_error():
         return jsonify({'msg': 'Access token is incorrect'}), 404
 
-    # @app.route('/token/refresh', methods=['POST'])
-    # @jwt_refresh_token_required
-    # def refresh():
-    #     # Create the new access token
-    #     current_user = get_jwt_identity()
-    #     print("found user in refresh:",current_user)
-    #     access_token = create_access_token(identity=current_user)
-    #     # Set the access JWT and CSRF double submit protection cookies
-    #     # in this response
-    #     resp = jsonify({
-    #             'refresh': True,
-    #             'user_name': current_user
-    #             })
-    #     set_access_cookies(resp, access_token)
-    #     return resp, 200
-
     @app.route('/logout', methods=['POST'])
     @jwt_required
     def logout():
@@ -179,6 +165,9 @@ def create_app(config_filename):
     @login_manager.user_loader
     def load_user(user_id):
         loaded_user = User.query.get(int(user_id))
+        if not loaded_user:
+            print("No current user")
+            return
         user_membership = Membership.query.filter_by(related_user_id=loaded_user.id).first()
         loaded_user.related_role_id = user_membership.related_role_id
         print("load_user:",loaded_user)

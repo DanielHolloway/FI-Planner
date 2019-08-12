@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactPhoneInput from 'react-phone-input-2';
 
 const ErrorValidationLabel = ({ txtLbl }) => (
   <label className="mb-0 error-color" htmlFor="">
@@ -11,14 +10,9 @@ export default class LoginForm extends Component {
     constructor(props) {
         super(props);
         console.log(props);
-        this.state = {
-            phone: '',
-        }
-        this.handleOnChange.bind(this);
     }
 
     changeData = (event) => {
-        console.log(event);
         event.preventDefault();
         this.props.handleInputChange(event);
     }
@@ -28,18 +22,7 @@ export default class LoginForm extends Component {
         this.props.submitEntry(event);
     }
 
-    handleOnChange = (value) => {
-        console.log('changing number to ',value);
-        this.setState({ phone: value });
-        event = {
-            target: {
-                type: 'tel',
-                value: value,
-                name: 'phonenumber'
-            }
-        }
-        this.props.handleInputChange(event);
-    }
+    
 
     mapFieldInputs = () => {
         //we filter out `allFieldsValid` property as this is not included state for our input fields
@@ -71,27 +54,12 @@ export default class LoginForm extends Component {
                 <div className="form-group" key={field.fieldId} >
                     <label htmlFor={field.fieldName}>{field.fieldName}</label>
                     
-                    {field.type != 'tel' ? (
-                        <input type={field.type} className="form-control" name={field.fieldId} 
-                            placeholder={field.fieldName} 
-                            value={field.value}
-                            onChange={this.changeData}
-                            {...opts}
-                        />
-                    ) : (
-                        <div className="text-dark" type={field.type} 
-                            name={field.fieldId} 
-                            placeholder={field.fieldName} 
-                            value={field.value}
-                            {...opts}
-                        >
-                            <ReactPhoneInput style="width: 100%;" defaultCountry={'us'} enableSearchField='true' value={this.state.phone} onChange={this.handleOnChange}
-                                
-                            />
-                        </div>
-                    )
-                    
-                    }
+                    <input type={field.type} className="form-control" name={field.fieldId} 
+                        placeholder={field.fieldName} 
+                        value={field.value}
+                        onChange={this.changeData}
+                        {...opts}
+                    />
                     {field.type=="password" && 
                         <label className="mb-0" htmlFor="password-reminder">Do not re-use passwords from other websites.</label>
                     }

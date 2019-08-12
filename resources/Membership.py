@@ -37,7 +37,8 @@ class MembershipResource(Resource):
             related_account_id=json_data['related_account_id'],
             related_role_id=json_data['related_role_id'],
             account_email_address=json_data['account_email_address'],
-            account_phone_number=json_data['account_phone_number']
+            account_phone_number=json_data['account_phone_number'],
+            verified=json_data['verified']
             )
 
         db.session.add(membership)
@@ -70,6 +71,7 @@ class MembershipResource(Resource):
         membership.related_role_id = data['related_role_id']
         membership.account_email_address = data['account_email_address']
         membership.account_phone_number = data['account_phone_number']
+        membership.verified = data['verified']
         db.session.commit()
 
         result = membership_schema.dump(membership).data
