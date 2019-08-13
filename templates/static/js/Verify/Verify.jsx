@@ -8,7 +8,7 @@ import PhotoCred from '../components/PhotoCred';
 
 import { authHeader } from '../helpers';
 
-import { userActions } from '../actions';
+import { userActions, alertActions } from '../actions';
 
 
 const txtFieldState = {
@@ -35,6 +35,7 @@ class Verify extends Component {
         };
         this.submitEntry = this.submitEntry.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.reIssueCode = this.reIssueCode.bind(this);
 
         console.log("in SignUp jsx deeper");
         //console.log(curUser);
@@ -177,6 +178,50 @@ class Verify extends Component {
         this.validateSubmit(e.target);
     }
 
+    reIssueCode() {
+        console.log("reissuing code",this.state);
+        var postHeader = authHeader();
+        postHeader['Accept'] = 'application/json';
+        postHeader['Content-Type'] = 'application/json';
+        fetch('/api/Verify', {
+            method: 'PUT',
+            headers: postHeader
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            if(data.error){
+                throw Error(data.message);
+            }
+            console.log("DATA STORED",data);
+            
+            /*const user = {
+                first_name: data.first_name,
+                last_name: data.last_name,
+                user_name: data.user_name
+            }
+            const { dispatch } = this.props;
+            console.log(user,this.props);
+            if (user.user_name) {
+                dispatch(userActions.verify(user));
+            }
+            this.state = {
+                code: {
+                    ...this.state[code],
+                    value: ''
+                },
+                allFieldsValid: false
+            };*/
+        })
+        .catch((error) => {
+            console.log('error: ' + error);
+            const { dispatch } = this.props;
+            dispatch(alertActions.error("Please wait before sending another verification code"));
+            //this.setState({ requestFailed: true });
+        });
+    }
+
     render() {
         return (
             <div>
@@ -193,6 +238,7 @@ class Verify extends Component {
                                             value={this.state}
                                             handleInputChange={this.handleInputChange}
                                             submitEntry={this.submitEntry}
+                                            reIssueCode={this.reIssueCode}
                                             key="verify-form" 
                                         />
                                     </div>

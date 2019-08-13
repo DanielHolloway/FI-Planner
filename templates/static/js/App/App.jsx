@@ -27,7 +27,7 @@ class App extends React.Component {
         return (
             <div>
                 {alert.message &&
-                    <div className={'alert ${alert.type}'}>{alert.message}</div>
+                    <div className={'alert alert-backer ${alert.type}'}>{alert.message}</div>
                 }
                 <div>
                     <Route exact path="/" component={Home} />

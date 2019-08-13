@@ -69,7 +69,7 @@ class Home extends Component {
            })
       })
       .then((response) => {
-         console.log(response.headers);
+         console.log(response.headers,response.status);
          if(response.status == 403){
             this.setState({ lockOut: true });
          }
@@ -87,8 +87,13 @@ class Home extends Component {
          }
       })
       .catch((error) => {
-           console.log('error: ' + error);
-           this.setState({ badLogin: true });
+         console.log('error: ' + error,error,error.toString().includes('417'),error=='417');
+         this.setState({ badLogin: true });
+         if(error.toString().includes('417')){
+            console.log('redirecting to verify');
+            const { history } = this.props;
+            history.push('/verify');
+         }
       });       
    }
    

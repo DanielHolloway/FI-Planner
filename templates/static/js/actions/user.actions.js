@@ -18,16 +18,6 @@ function verify(user) {
         userService.verify(user);
         dispatch(success(user));
         history.push('/');
-            /*.then(
-                user => { 
-                    dispatch(success(user));
-                    history.push('/');
-                },
-                error => {
-                    dispatch(failure(error));
-                    dispatch(alertActions.error(error));
-                }
-            );*/
     };
 
     function request(user) { return { type: userConstants.VERIFY_REQUEST, user } }

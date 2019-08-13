@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import request, jsonify, g, current_app
+from flask import request, jsonify, g, current_app, redirect, session
 from flask_restful import Resource
 from Model import db, Login, LoginSchema, User, Membership, client
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -83,6 +83,7 @@ class LoginResource(Resource):
             return {'message': 'No input data provided', 'error': 'true'}, 400
         # Validate and deserialize input
         print(json_data)
+        #why do we set related_user_id? probably re-work this line
         json_data['related_user_id'] = 0
         data, errors = login_schema.load(json_data)
         if errors:
@@ -119,13 +120,15 @@ class LoginResource(Resource):
                     # Set the JWTs and the CSRF double submit protection cookies
                     # in this response
                     user_membership = Membership.query.filter_by(related_user_id=user_id.id).first()
-                    user_id.related_role_id = user_membership.related_role_id
                     if not user_membership:
                         current_app.logger.error('Membership not found in Login POST')
                         return {'message': 'Login membership does not exist', 'error': 'true'}, 400
+                    user_id.related_role_id = user_membership.related_role_id
                     if user_membership.verified != 1:
                         current_app.logger.error('Membership not verified in Login POST')
-                        return {'message': 'Account must be verified before login', 'error': 'true'}, 400
+                        #redirect("/verify", code=302)
+                        session['phone'] = user_membership.account_phone_number
+                        return {'message': 'Account must be verified before login', 'error': 'true'}, 417
                     login_user(user_id)
                     resp = jsonify({
                         'login': True,

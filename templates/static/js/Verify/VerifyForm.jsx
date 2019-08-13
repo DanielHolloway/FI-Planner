@@ -22,7 +22,10 @@ export default class LoginForm extends Component {
         this.props.submitEntry(event);
     }
 
-    
+    reIssueCode = (event) => {
+        event.preventDefault();
+        this.props.reIssueCode();
+    }
 
     mapFieldInputs = () => {
         //we filter out `allFieldsValid` property as this is not included state for our input fields
@@ -74,11 +77,16 @@ export default class LoginForm extends Component {
 
         return (
             <form className="table-dark text-white p-3 w-100 glow" onSubmit={this.submitData} noValidate>
-                <h3 className="customFont">Sign Up</h3>
+                <h3 className="customFont">Please verify your phone</h3>
                 { buildFields }
-                <button type="submit" className="btn btn-primary">
-                    Submit
-                </button>
+                <div className="d-flex justify-content-between">
+                    <button type="submit" className="btn btn-primary">
+                        Submit
+                    </button>
+                    <div type="reissue" onClick={this.reIssueCode} className="btn btn-secondary">
+                        Re-issue code
+                    </div>
+                </div>
             </form>
         );
     }

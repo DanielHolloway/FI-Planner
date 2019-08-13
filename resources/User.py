@@ -6,7 +6,7 @@ from flask_login import login_user
 from flask_jwt_extended import (create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, 
                                 jwt_required, jwt_refresh_token_required, get_jwt_identity)
 from templates import admin_required, fresh_admin_required
-import json
+import json, datetime
 from twilio.rest import Client
 
 # Initialize Twilio client
@@ -100,7 +100,7 @@ def check_verification(phone, code):
             result = login_schema.dump(login).data
 
             print("got this login object:",login,"and this result:",result)
-            
+            session['codecounter']=0
             current_app.logger.info('Successful Verify PUT')
             return userVerified(login)
             # return { "status": 'success', 'data': result }, 201
@@ -126,6 +126,31 @@ class UserVerifyResource(Resource):
         phone = session.get('phone')
         code = json_data['code']
         return check_verification(phone, code)
+
+    def put(self):
+        count = session.get('codecounter')
+        val = session.get('codetimer')
+        if count is None:
+            count = 0
+        time_delay = 180 * (2**(count))
+        session['codetimer']=datetime.datetime.utcnow()+datetime.timedelta(0,time_delay)
+        count += 1
+        session['codecounter']=count
+        present = datetime.datetime.utcnow()
+        if val is not None:
+            if val > present:
+                current_app.logger.error('Wait before using phone verification in Verify PUT')
+                return {'message': 'Wait before using phone verification', 'error': 'true'}, 429
+
+        phone = session.get('phone')
+        vsid = start_verification(phone)
+
+        if vsid is None:
+            current_app.logger.error('Bad phone verification in Verify PUT')
+            return {'message': 'Bad phone verification', 'error': 'true'}, 400
+
+        return { "status": 'success' }, 201
+        
 
 class UserResource(Resource):
     #removed jwt gate so that Redux works

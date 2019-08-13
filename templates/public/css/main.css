@@ -188,3 +188,8 @@ h3.customFont {
     width: 50%;
     max-width: 30rem;
 }
+
+.alert-backer {
+    background-color: white;
+    z-index: 1;
+}

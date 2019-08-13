@@ -131,19 +131,17 @@ To-do list:
     Activity logging for API's and blacklist on 8/7
     Listed and organized architecture components and took photo on 8/12
     SMS verification on 8/12
+    Built redirecting from un-registered URL paths on 8/14
+    SMS verification redirect and reissue are working along with error message on 8/14
 
     ### FEATURES ###
-    Add API error messages to React forms
-    Ensure that users can't use site without being text-verified
-        - add in /api/Login so that cookies aren't granted without it
-            - done, but still need to re-issue text and re-direct to verify page
-        - make the Verify page look better
     Mobile responsiveness
+    Add API error messages to React forms
     DB encryption
     Metrics page
 
     ### BUGS ###
-    Old JWT's cause "UNPROCESSABLE ENTITY" when hitting "GET api/Entry". Need to fix old JWT's: use refresher token and refresh the old ones
+    Div content not filling body
 
 
     ### GENERAL SECURITY CHECKLIST ###

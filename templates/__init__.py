@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import Flask, g
+from flask import Flask, g, redirect, make_response
 from flask import request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from pathlib import Path
@@ -207,5 +207,11 @@ def create_app(config_filename):
                 app.logger.warning('Blocked request from blacklist')
                 #print("VALID DATE!!",val,present)
                 abort(403)
+
+    @app.route('/', defaults={'path': ''})
+    @app.route('/<path:path>')
+    def catch_all(path):
+        #return 'You want path: %s' % path
+        return redirect("/", code=302)
 
     return app
