@@ -142,6 +142,9 @@ class UserVerifyResource(Resource):
                 current_app.logger.error('Wait before using phone verification in Verify PUT')
                 return {'message': 'Wait before using phone verification', 'error': 'true'}, 429
 
+        #remove after debugging
+        return {'message': 'Wait before using phone verification', 'error': 'true'}, 429
+
         phone = session.get('phone')
         vsid = start_verification(phone)
 

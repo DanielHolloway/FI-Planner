@@ -133,15 +133,19 @@ To-do list:
     SMS verification on 8/12
     Built redirecting from un-registered URL paths on 8/14
     SMS verification redirect and reissue are working along with error message on 8/14
+    Added DDoS protection via nginx configs on 8/14 (copy to prod)
+    Found that encrypting sqlite with python is exceedingly difficult, will revisit during MySQL migration 8/14
 
     ### FEATURES ###
     Mobile responsiveness
     Add API error messages to React forms
-    DB encryption
     Metrics page
 
     ### BUGS ###
-    Div content not filling body
+    Div content not filling body - only happens when Alert pops up
+
+    ### FUTURE RELEASES ###
+    DB encryption
 
 
     ### GENERAL SECURITY CHECKLIST ###
