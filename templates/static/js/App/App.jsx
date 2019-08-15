@@ -15,9 +15,10 @@ class App extends React.Component {
         super(props);
 
         const { dispatch } = this.props;
+        console.log("IN APP.JSX",dispatch,history);
         history.listen((location, action) => {
             // clear alert on location change
-            console.log("clearing alerts");
+            console.log("clearing alerts and location is: ",location);
             dispatch(alertActions.clear());
         });
     }
@@ -25,16 +26,18 @@ class App extends React.Component {
     render() {
         const { alert } = this.props;
         return (
-            <div>
-                {/* ${alert.type}*/}
-                {alert.message &&
-                    <div className={'alert alert-backer'}>{alert.message}</div>
-                }
-                <div>
-                    <Route exact path="/" component={Home} />
-                    <Route path="/signup" component={SignUp} />
-                    <Route path="/verify" component={Verify} />
-                    <PrivateRoute path="/journal" component={Journal} />
+            <div className="wrapper">
+                <div className="slide img-journal">
+                    {/* ${alert.type}*/}
+                    {alert.message &&
+                        <div className="alert alert-backer w-100">{alert.message}</div>
+                    }
+                    <div className="w-100 d-flex flex-grow-1">
+                        <Route exact path="/" component={Home} />
+                        <Route path="/signup" component={SignUp} />
+                        <Route path="/verify" component={Verify} />
+                        <PrivateRoute path="/journal" component={Journal} />
+                    </div>
                 </div>
             </div>
         );

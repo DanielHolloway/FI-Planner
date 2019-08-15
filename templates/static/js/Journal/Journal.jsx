@@ -230,33 +230,27 @@ class Journal extends Component {
             )
         )*/}
         return (
-            <div>
-                <div className="bg-journal position-absolute">
-                </div>
-                <div className="position-relative">
-                    <div className="h-100 w-100 flex-container">
-                        <div className="h-95 w-100 flex-center-space">
-                            <Header />
-                            <div className="h-100 w-100 d-flex align-items-center mt-5">
-                                <div className="d-flex flex-row h-100 w-100 flex-even align-items-baseline">
-                                    <div className="w-50">
-                                        {this.state.shmeats}
-                                    </div>
-                                    <div className="w-25">
-                                        <EntryForm 
-                                            value={this.state}
-                                            handleInputChange={this.handleInputChange}
-                                            submitEntry={this.submitEntry}
-                                            key="entry-form" 
-                                        />
-                                    </div>
-                                </div>
+            <div className="inner h-100">
+                <div className="h-95 w-100 flex-center-space">
+                    <Header />
+                    <div className="h-100 w-100 d-flex align-items-center mt-5p">
+                        <div className="journal-container">
+                            <div className="w-25-journal">
+                                <EntryForm 
+                                    value={this.state}
+                                    handleInputChange={this.handleInputChange}
+                                    submitEntry={this.submitEntry}
+                                    key="entry-form" 
+                                />
+                            </div>
+                            <div className="w-50-journal">
+                                {this.state.shmeats}
                             </div>
                         </div>
-                        <div className="w-100 p-2 flex-bottom-right">
-                            <PhotoCred page={'journal'} />
-                        </div>
                     </div>
+                </div>
+                <div className="w-100 p-2 flex-bottom-right">
+                    <PhotoCred page={'journal'} />
                 </div>
             </div>
         )
