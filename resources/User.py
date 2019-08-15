@@ -125,9 +125,11 @@ class UserVerifyResource(Resource):
         # Validate and deserialize input
         phone = session.get('phone')
         code = json_data['code']
+        current_app.logger.info('Successful Verify POST')
         return check_verification(phone, code)
 
     def put(self):
+        current_app.logger.info('Processing Verify PUT')
         count = session.get('codecounter')
         val = session.get('codetimer')
         if count is None:
@@ -155,6 +157,7 @@ class UserVerifyResource(Resource):
             current_app.logger.error('Bad phone verification in Verify PUT')
             return {'message': 'Bad phone verification', 'error': 'true'}, 400
 
+        current_app.logger.info('Successful Verify POST')
         return { "status": 'success' }, 201
         
 
@@ -266,6 +269,7 @@ class UserResource(Resource):
 
         password_hash = ""
         user_login = {}
+        current_app.logger.info('Successful User POST')
         return { "status": 'success', 'data': result }, 201
 
     #make an api for specific user ID to restrict user access to their own entries

@@ -181,6 +181,9 @@ ENV/
 env.bak/
 venv.bak/
 
+#nginx
+nginx.*
+
 # Spyder project settings
 .spyderproject
 .spyproject
