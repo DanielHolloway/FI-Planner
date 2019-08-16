@@ -35,6 +35,10 @@ chmod 400 <pem file>
 ssh-add <pem file>
 ssh <user>@<address>
 once you're in, use "sudo systemctl start nginx" to start the server back up
+If you reimport from Git, make sure that you run "pip install -r requirements.txt" and "npm install" in the right directories
+Also, make sure that memcached is installed and running:
+    sudo apt-get install memcached
+    sudo systemctl status memcached
 
 To re-enter the virtual Python environment: .\env\Scripts\activate
 .\static> npm run watch (or npm run build)
