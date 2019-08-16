@@ -27,17 +27,7 @@ class Home extends Component {
    }
    
    componentDidMount() {
-      //this.props.dispatch(userActions.getAll());
-      console.log(this.props);
       if(!this.props.logFlag){
-         /*const requestOptions = {
-             method: 'GET',
-             //headers: authHeader()
-         };
-         return fetch('/fuck', requestOptions).then(function(response){
-            console.log(response);
-         });*/
-         //uncomment for refresh
          this.props.dispatch(userActions.refresh());
       }
    }
@@ -69,7 +59,6 @@ class Home extends Component {
            })
       })
       .then((response) => {
-         console.log(response.headers,response.status);
          if(response.status == 403){
             this.setState({ lockOut: true });
          }
@@ -77,20 +66,16 @@ class Home extends Component {
          else return response.json();
       })
       .then((data) => {
-         console.log("DATA STORED",data);
          this.setState({ submitted: true, badLogin: false, lockOut: false });
          const { username, password } = this.state;
          const { dispatch } = this.props;
-         console.log(username,password,this.props);
          if (username && password) {
             dispatch(userActions.login(username, password));
          }
       })
       .catch((error) => {
-         console.log('error: ' + error,error,error.toString().includes('417'),error=='417');
          this.setState({ badLogin: true });
          if(error.toString().includes('417')){
-            console.log('redirecting to verify');
             const { history } = this.props;
             history.push('/verify');
          }
@@ -99,7 +84,6 @@ class Home extends Component {
    
    logOut() {
       // reset login status
-      console.log("logging out");
       this.props.dispatch(userActions.logout());
       this.setState(
          {
@@ -177,7 +161,7 @@ class Home extends Component {
                         
                      </div>
                      {!logFlag && 
-                        <h4 className="text-white my-4">- or -</h4>
+                        <h4 className="text-white my-4">or</h4>
                      }
                      <div className="p-2">
                         <Start history={this.props.history} logFlag={this.props.logFlag} />
@@ -197,7 +181,6 @@ function mapStateToProps(state) {
     const { users, authentication } = state;
     const { user } = authentication;
     var logFlag = state.authentication.loggedIn;
-    console.log("mapped state",user);
     return {
         user,
         users,

@@ -15,6 +15,5 @@ medium_blueprint = Blueprint('medium_article',__name__)
 @medium_blueprint.route('/signup')
 @medium_blueprint.route('/verify')
 def index():
-    print("shmeeeat")
     return render_template("index.html")
     

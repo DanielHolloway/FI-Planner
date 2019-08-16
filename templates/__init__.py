@@ -18,7 +18,7 @@ def fresh_admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_fresh_jwt_in_request()
-        print("hit fresh admin_required!:",g.user.related_role_id)
+        
         if(g.user.related_role_id != 1):  #NOT ADMIN UNLESS ROLE ID IS 1
             return {'message': 'Lacking the proper role', 'error': 'true'}, 400
         else:
@@ -29,7 +29,7 @@ def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
-        print("hit admin_required!:",g.user.related_role_id)
+        
         if(g.user.related_role_id != 1):  #NOT ADMIN UNLESS ROLE ID IS 1
             return {'message': 'Lacking the proper role', 'error': 'true'}, 400
         else:
@@ -44,12 +44,6 @@ def create_app(config_filename):
     logging.basicConfig(filename='fiplanner.log',
     level=logging.DEBUG,
     format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
-
-    @app.route("/fuck")
-    def hello():
-        print("we're starting")
-        resp = jsonify({'logout': True})
-        return resp, 200
 
     load_dotenv(find_dotenv())
 
@@ -107,7 +101,6 @@ def create_app(config_filename):
     # should be added to the access token.
     @jwt.user_claims_loader
     def add_claims_to_access_token(user):
-        print("add claims user:",user)
         try: 
             user['user_name']
         except:
@@ -134,14 +127,11 @@ def create_app(config_filename):
         expected_keys = ['user_name']
         for key in expected_keys:
             if key not in user_claims:
-                print("key not in user_claims",key,user_claims)
                 return False
             else:
                 checkJWT = get_jwt_identity()
-                print("checkJWT: ",checkJWT)
                 if(checkJWT != None):
                     if(checkJWT['user_name'] != user_claims[key]):
-                        print("identity doesn't match",get_jwt_identity(),user_claims[key])
                         return False
         return True
 
@@ -153,7 +143,6 @@ def create_app(config_filename):
     @app.route('/logout', methods=['POST'])
     @jwt_required
     def logout():
-        print("logging out in init.py")
         jti = get_raw_jwt()['jti']
         blacklist.add(jti)
         resp = jsonify({'logout': True})
@@ -166,11 +155,9 @@ def create_app(config_filename):
     def load_user(user_id):
         loaded_user = User.query.get(int(user_id))
         if not loaded_user:
-            print("No current user")
             return
         user_membership = Membership.query.filter_by(related_user_id=loaded_user.id).first()
         loaded_user.related_role_id = user_membership.related_role_id
-        print("load_user:",loaded_user)
         return loaded_user
 
     @app.before_request
@@ -179,7 +166,6 @@ def create_app(config_filename):
 
     # used to instantiate comments.db
     with app.app_context():
-        print("trying to create db")
         from Model import Comment
         from Model import Category
         db.create_all()
@@ -196,22 +182,18 @@ def create_app(config_filename):
 
     @app.before_request
     def block_method():
-        #ip = request.environ.get('REMOTE_ADDR')
         ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr) 
         dct = dict(ip_ban_list)
         val = dct.get(ip)
-        #print("val from block check:",val,ip_ban_list)
         if val is not None:
             present = datetime.datetime.utcnow()
             if val > present:
                 app.logger.warning('Blocked request from blacklist')
-                #print("VALID DATE!!",val,present)
                 abort(403)
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
     def catch_all(path):
-        #return 'You want path: %s' % path
         return redirect("/", code=302)
 
     return app

@@ -157,5 +157,3 @@ class CategorySchema(ma.Schema):
     id = fields.Integer()
     name = fields.String(required=True)
 
-
-print("passed classes")

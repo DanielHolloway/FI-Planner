@@ -12,10 +12,6 @@ import { authHeader } from '../helpers';
 
 import { userActions } from '../actions';
 
-import axios from 'axios';
-
-console.log("in Journal jsx");
-
 const txtFieldState = {
     valid: true,
     typeMismatch: false,
@@ -67,9 +63,6 @@ class Journal extends Component {
         };
         this.submitEntry = this.submitEntry.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-
-        console.log("in Journal jsx deeper");
-        //console.log(curUser);
     }
 
 
@@ -106,7 +99,7 @@ class Journal extends Component {
           .reduce((acc, currVal) => {
             //then we finally use reduce, ready to put it in our state
             const { value, valid, typeMismatch, type } = currVal;
-            console.log(currVal,this.state[currVal.name]);
+            
             const { fieldName, requiredTxt, formatErrorTxt } = this.state[
               currVal.name
             ]; //get the rest of properties inside the state object
@@ -124,7 +117,7 @@ class Journal extends Component {
     
             return acc;
           }, {});
-          console.log(formValues);
+          
         return formValues;
     };
 
@@ -136,9 +129,8 @@ class Journal extends Component {
 
     postEntry() {
         const { user } = this.props;
-        console.log("trying to post: ",this.state.allFieldsValid);
+        
         if(this.state.allFieldsValid){
-            console.log("posting this!",this.state,user);
             var postHeader = authHeader();
             postHeader['Accept'] = 'application/json';
             postHeader['Content-Type'] = 'application/json';
@@ -158,7 +150,6 @@ class Journal extends Component {
                 else return response.json();
             })
             .then((data) => {
-                console.log("DATA STORED",data);
                 this.state = {
                     entryName: '',
                     entryCategory: 'Work',
@@ -168,19 +159,14 @@ class Journal extends Component {
                 this.getEntries();
             })
             .catch((error) => {
-                console.log('error: ' + error);
-                //this.setState({ requestFailed: true });
             });
         }
     }
 
     validateSubmit = (target) => {
         //we filter out `allFieldsValid` property as this is not included state for our input fields
-        console.log(target);
         const formValues = this.reduceFormValues(target.elements);
         const allFieldsValid = this.checkAllFieldsValid(formValues);
-        
-        console.log(allFieldsValid);
 
         this.setState({ ...formValues, allFieldsValid }, this.postEntry); //we set the state based on the extracted values from Constraint Validation API
         
@@ -200,14 +186,8 @@ class Journal extends Component {
             headers: authHeader()
         })
         .then(results => {
-            console.log(results);
-            /*if(!results.ok){
-                console.log("logging out in Journal.jsx",results);
-                this.props.dispatch(userActions.logout());
-            }*/
             return results.json();
         }).then(data => {
-            console.log(data);
             let shmeats = this.buildTable(data.data);
             this.setState({shmeats: shmeats});
         });
@@ -261,7 +241,6 @@ function mapStateToProps(state) {
     const { users, authentication } = state;
     const { user } = authentication;
     var logFlag = state.authentication.loggedIn;
-    console.log("SKRRT, SKRRT",user,logFlag,state.authentication.loggedIn,state);
     return {
         user,
         users,

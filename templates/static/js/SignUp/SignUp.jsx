@@ -86,16 +86,13 @@ class SignUp extends Component {
         };
         this.submitEntry = this.submitEntry.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-
-        console.log("in SignUp jsx deeper");
-        //console.log(curUser);
     }
 
     handleInputChange(event) {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-        console.log(name,value);
+        
         this.setState({
             [name]: {
                 ...this.state[name],
@@ -113,12 +110,11 @@ class SignUp extends Component {
           .map(x => {
             const { typeMismatch } = x.validity;
             const { name, type, value, pattern } = x;
-            console.log("getting validity!",typeMismatch,x.checkValidity(),x.validationMessage);
+            
             var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{12,})");
             var validFlag=true;
             if(type=='password'){
                 validFlag = strongRegex.test(value);
-                console.log(validFlag);
             }
             else{
                 validFlag = x.checkValidity();
@@ -136,7 +132,6 @@ class SignUp extends Component {
           .reduce((acc, currVal) => {
             //then we finally use reduce, ready to put it in our state
             const { value, valid, typeMismatch, type, pattern } = currVal;
-            console.log(currVal,this.state[currVal.name]);
             const { fieldName, requiredTxt, formatErrorTxt } = this.state[
               currVal.name
             ]; //get the rest of properties inside the state object
@@ -155,7 +150,7 @@ class SignUp extends Component {
     
             return acc;
           }, {});
-          console.log(formValues);
+          
         return formValues;
     };
 
@@ -166,7 +161,6 @@ class SignUp extends Component {
     };
 
     postUser() {
-        console.log("posting this!",this.state);
         if(this.state.allFieldsValid){
             var postHeader = authHeader();
             postHeader['Accept'] = 'application/json';
@@ -189,15 +183,8 @@ class SignUp extends Component {
                 if(data.error){
                     throw Error(data.message);
                 }
-                console.log("DATA STORED",data,this.props);
                 const { history } = this.props;
                 history.push('/verify');
-                // const { username, password } = this.state;
-                // const { dispatch } = this.props;
-                // console.log(username,password,this.props);
-                // if (username.value && password.value) {
-                //    dispatch(userActions.login(username.value, password.value));
-                // }
                 this.state = {
                     first_name: {
                         ...this.state[first_name],
@@ -223,19 +210,15 @@ class SignUp extends Component {
                 };
             })
             .catch((error) => {
-                console.log('error: ' + error);
-                //this.setState({ requestFailed: true });
             });
         }
     }
 
     validateSubmit = (target) => {
         //we filter out `allFieldsValid` property as this is not included state for our input fields
-        console.log(target);
         const formValues = this.reduceFormValues(target.elements);
         const allFieldsValid = this.checkAllFieldsValid(formValues);
         
-        console.log(allFieldsValid);
         this.setState({ ...formValues, allFieldsValid }, this.postUser); //we set the state based on the extracted values from Constraint Validation API
         
     };
@@ -299,7 +282,7 @@ function mapStateToProps(state) {
     const { users, authentication } = state;
     const { user } = authentication;
     var logFlag = state.authentication.loggedIn;
-    console.log("SKRRT, SKRRT",user,logFlag,state.authentication.loggedIn,state);
+    
     return {
         user,
         users,

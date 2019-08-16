@@ -10,7 +10,6 @@ const ErrorValidationLabel = ({ txtLbl }) => (
 export default class EntryForm extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     changeData = (event) => {
@@ -21,7 +20,6 @@ export default class EntryForm extends Component {
     }
 
     submitData = (event) => {
-        console.log(event.target);
         this.props.submitEntry(event);
     }
 

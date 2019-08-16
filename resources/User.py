@@ -19,7 +19,6 @@ membership_schema = MembershipSchema()
 
 def userVerified(login):
     current_app.logger.info('Verified user in Verify PUT')
-    print("userVerified: ",login.user_name);
     access_token = create_access_token(identity=login.user_name, fresh=True)
     refresh_token = create_refresh_token(identity=login.user_name)
     # Set the JWTs and the CSRF double submit protection cookies
@@ -31,7 +30,6 @@ def userVerified(login):
         current_app.logger.error('Membership not found in Login POST')
         return {'message': 'Login membership does not exist', 'error': 'true'}, 400
     login_user(user_id)
-    print("about to jsonify in UserVerified")
     resp = jsonify({
         'login': True,
         'message': 'Login successful',
@@ -40,13 +38,8 @@ def userVerified(login):
         'user_name': user_id.user_name,
         'id': user_id.id,
         })
-    print("about to set cookies",resp)
     set_access_cookies(resp, access_token)
     set_refresh_cookies(resp, refresh_token)
-    # clear the failed login counter
-    #print("trying to set this ip in memcached:",ip,flush=True)
-    #client.set(ip, 0)
-    print("about to return resp from userVerified")
     resp.status_code = 200
     return resp
 
@@ -87,8 +80,6 @@ def check_verification(phone, code):
             membership.verified = 1
             db.session.commit()
             result = membership_schema.dump(membership).data
-            
-            print("Got this result after membership dump:",result)
 
             login = Login.query.filter_by(related_user_id=result['related_user_id']).first()
             if not login:
@@ -99,7 +90,6 @@ def check_verification(phone, code):
 
             result = login_schema.dump(login).data
 
-            print("got this login object:",login,"and this result:",result)
             session['codecounter']=0
             current_app.logger.info('Successful Verify PUT')
             return userVerified(login)
@@ -164,6 +154,7 @@ class UserVerifyResource(Resource):
 class UserResource(Resource):
     #removed jwt gate so that Redux works
     # @jwt_required
+    @fresh_admin_required
     def get(self):
         current_app.logger.info('Processing User GET')
         users = User.query.all()
@@ -203,11 +194,9 @@ class UserResource(Resource):
 
         result = user_schema.dump(user).data
 
-        print("user id is ",result,result['id'])
         user_login = {"password_hash": password_hash, "related_user_id": result['id'], "user_name": json_data['user_name']}
 
         data, errors = login_schema.load(user_login)
-        print("data and errors: ",data,errors)
         if errors:
             current_app.logger.error('Bad Login data given to User POST')
             return errors, 422
@@ -237,7 +226,6 @@ class UserResource(Resource):
             return {'message': 'Bad phone verification', 'error': 'true'}, 400
 
         data, errors = membership_schema.load(user_membership)
-        print("data and errors: ",data,errors)
 
         if errors:
             current_app.logger.error('Bad Membership data given to User POST')
@@ -262,8 +250,6 @@ class UserResource(Resource):
         # new_user.last_name = result['last_name']
         # new_user.user_name = result['user_name']
         user_id = User.query.filter_by(user_name=json_data['user_name']).first()
-        print("user_membership: ",user_membership)
-        print(user_membership['related_role_id']," ",result)
         user_id.related_role_id = user_membership['related_role_id']
         login_user(user_id)
 

@@ -137,10 +137,11 @@ To-do list:
     Found that encrypting sqlite with python is exceedingly difficult, will revisit during MySQL migration 8/13
     Div content not filling body - only happens when Alert pops up - fixed on 8/14
     Mobile responsiveness - 8/14
+    https://www.owasp.org/images/7/72/OWASP_Top_10-2017_%28en%29.pdf.pdf on 8/15
+    Change background images based on page and blur them on 8/15
 
     ### FEATURES ###
     Test security and leave deployed
-    Change background images based on page and blur them
     Add API error messages to React forms
     Metrics page
 

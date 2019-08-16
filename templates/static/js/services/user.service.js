@@ -23,7 +23,6 @@ function verify(user) {
 }
 
 function login(username, password) {
-    console.log("ooo baby");
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -40,7 +39,6 @@ function login(username, password) {
         .then(handleResponse)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            console.log("stringifying this user: ", user);
             sessionStorage.setItem('user', JSON.stringify(user));
 
             return user;
@@ -48,7 +46,6 @@ function login(username, password) {
 }
 
 function refresh() {
-    console.log("ooo baby");
     if(!authHeaderRefresh()){
         const error = "REFRESH TOKEN UNAVAILABLE";
         return Promise.reject(error);
@@ -62,7 +59,6 @@ function refresh() {
         .then(handleResponseNoLogout)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            console.log("stringifying this user: ", user);
             sessionStorage.setItem('user', JSON.stringify(user));
 
             return user;
@@ -82,7 +78,6 @@ function logout() {
         .then(handleResponseNoLogout)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            console.log("stringifying this user: ", user);
             sessionStorage.removeItem('user');
 
             return user;
@@ -97,7 +92,6 @@ function getAll() {
     return fetch('api/User', requestOptions).then(handleResponse)
     .then(users => {
         // store user details and jwt token in local storage to keep user logged in between page refreshes
-        console.log(users);
         sessionStorage.setItem('users', JSON.stringify(users));
 
         return users;
@@ -107,7 +101,6 @@ function getAll() {
 function handleResponse(response) {
     return response.text().then(text => {
         const data = text && JSON.parse(text);
-        console.log("GOT THIS RESPONSE: ",response,data);
         if (!response.ok) {
             if (response.status === 401) {
                 // auto logout if 401 response returned from api
@@ -126,7 +119,6 @@ function handleResponse(response) {
 function handleResponseNoLogout(response) {
     return response.text().then(text => {
         const data = text && JSON.parse(text);
-        console.log("GOT THIS RESPONSE: ",response,data);
         if (!response.ok) {
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);

@@ -13,7 +13,7 @@ import { Router, Route } from 'react-router-dom';
 
 import { history } from './helpers';
 import configureStore from './helpers/configureStore';
-import httpService from './services/httpService';
+
 import { App } from './App';
 
 // setup fake backend
@@ -21,9 +21,6 @@ import { App } from './App';
 //configureFakeBackend();
 
 const store = configureStore({});
-
-// call it afer we create the store and import history and you're good to go!
-//httpService.setupInterceptors(store, history);
 
 render(
     <Provider store={store}>

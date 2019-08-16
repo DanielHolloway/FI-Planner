@@ -4,5 +4,4 @@ hello_blueprint = Blueprint('hello',__name__)
 @hello_blueprint.route('/')
 @hello_blueprint.route('/hello')
 def index():
-    print("shmeat shmeat")
     return render_template("index.html")

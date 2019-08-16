@@ -37,18 +37,10 @@ export default class Login extends Component {
             else return response.json();
         })
         .then((data) => {
-            console.log("DATA STORED",data);
-            /*this.state = {
-                entryName: '',
-                entryCategory: 'Work',
-                entryMonth: 'May',
-                entryAmount: 0
-            };
-            this.getEntries();*/
+            //successful
         })
         .catch((error) => {
-            console.log('error: ' + error);
-            //this.setState({ requestFailed: true });
+            //error
         });
     }
 

@@ -9,7 +9,6 @@ const ErrorValidationLabel = ({ txtLbl }) => (
 export default class LoginForm extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     changeData = (event) => {
@@ -18,7 +17,6 @@ export default class LoginForm extends Component {
     }
 
     submitData = (event) => {
-        console.log(event.target);
         this.props.submitEntry(event);
     }
 
@@ -41,9 +39,7 @@ export default class LoginForm extends Component {
 
 
     render() {
-
         const fields = this.mapFieldInputs();
-        console.log(this.props,fields);
         const buildFields = fields.map((field) => {
             var opts = {};
             if (field.required) {
@@ -52,7 +48,7 @@ export default class LoginForm extends Component {
             if (field.pattern.length>0) {
                 opts['pattern'] = field.pattern;
             }
-            console.log(opts,field);
+            
             return(
                 <div className="form-group" key={field.fieldId} >
                     <label htmlFor={field.fieldName}>{field.fieldName}</label>

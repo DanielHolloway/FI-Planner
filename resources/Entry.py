@@ -12,7 +12,6 @@ class UserEntryResource(Resource):
     @jwt_required
     def get(self, user_id):
         current_app.logger.info('Processing UserEntry GET')
-        print("hit the get",user_id)
         entries = Entry.query.filter(Entry.related_user_id == user_id).all()
         entries = entries_schema.dump(entries).data
         return {'status': 'success', 'data': entries}, 200
@@ -21,7 +20,6 @@ class EntryResource(Resource):
     @admin_required
     def get(self):
         current_app.logger.info('Processing Entry GET')
-        print("hit the get")
         entries = Entry.query.all()
         entries = entries_schema.dump(entries).data
         return {'status': 'success', 'data': entries}, 200

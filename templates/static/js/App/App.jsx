@@ -13,21 +13,38 @@ import { Verify } from '../Verify';
 class App extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            backer: 'img-home'
+        };
 
         const { dispatch } = this.props;
-        console.log("IN APP.JSX",dispatch,history);
+        const loc = history.location.pathname;
+        this.state = { backer: history.location.pathname };
+        if(loc == '/'){
+            this.state = { backer: 'img-home' };
+        }
+        else{
+            this.state = { backer: 'img-journal' };
+        }
         history.listen((location, action) => {
             // clear alert on location change
-            console.log("clearing alerts and location is: ",location);
+            const loc = location.pathname;
+            if(loc == '/'){
+                this.setState({ backer: 'img-home' });
+            }
+            else{
+                this.setState({ backer: 'img-journal' });
+            }
             dispatch(alertActions.clear());
         });
     }
 
     render() {
         const { alert } = this.props;
+        
         return (
             <div className="wrapper">
-                <div className="slide img-journal">
+                <div className={'slide '+this.state.backer}>
                     {/* ${alert.type}*/}
                     {alert.message &&
                         <div className="alert alert-backer w-100">{alert.message}</div>

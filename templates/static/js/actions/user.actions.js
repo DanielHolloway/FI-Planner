@@ -50,33 +50,17 @@ function login(username, password) {
 function refresh() {
     return dispatch => {
         dispatch(request());
-
         
-        //userService.getAll()
-        //    .then(function(users) {
-                    userService.refresh()
-                        .then(
-                            user => { 
-                                /*if(user.success == false){
-                                    dispatch(failure(user));
-                                }
-                                console.log(users,user);
-                                var result = users.data.filter(obj => {
-                                    return obj.user_name === user.user_name
-                                });
-                                user.first_name = result[0].first_name;
-                                user.last_name = result[0].last_name;
-                                user.id = result[0].id;
-                                console.log(result[0],user);*/
-                                dispatch(success(user));
-                                history.push('/');
-                            },
-                            error => {
-                                dispatch(failure(error));
-                                //dispatch(alertActions.error(error));
-                            }
-                        );
-        //    });
+        userService.refresh()
+            .then(
+                user => { 
+                    dispatch(success(user));
+                    history.push('/');
+                },
+                error => {
+                    dispatch(failure(error));
+                }
+            );
     };
 
     function request() { return { type: userConstants.REFRESH_REQUEST } }

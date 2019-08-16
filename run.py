@@ -1,11 +1,6 @@
 from templates import create_app
 
 
-# import os
-# files = [f for f in os.listdir('.') if os.path.isfile(f)]
-# for f in files:
-#     print(f)
-
 if __name__ == '__main__':
     app = create_app('configurations')
     #Load this config object for development mode

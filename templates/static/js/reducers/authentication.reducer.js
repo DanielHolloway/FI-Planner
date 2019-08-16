@@ -5,7 +5,7 @@ try{
     user = JSON.parse(sessionStorage.getItem('user'));
 }
 catch (e){
-    console.log("exception: ",e);
+    
 }
 
 const initialState = user ? { loggedIn: true, user } : {};
@@ -18,7 +18,6 @@ export function authentication(state = initialState, action) {
         user: action.user
         };
     case userConstants.VERIFY_SUCCESS:
-        console.log(action.user);
         return {
         loggedIn: true,
         user: action.user
@@ -31,7 +30,6 @@ export function authentication(state = initialState, action) {
         user: action.user
         };
     case userConstants.LOGIN_SUCCESS:
-        console.log(action.user);
         return {
         loggedIn: true,
         user: action.user
@@ -44,7 +42,6 @@ export function authentication(state = initialState, action) {
         user: action.user
         };
     case userConstants.REFRESH_SUCCESS:
-        console.log(action.user);
         return {
         loggedIn: true,
         user: action.user

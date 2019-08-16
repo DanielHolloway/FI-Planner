@@ -23,7 +23,6 @@ class LoginRefreshResource(Resource):
         current_app.logger.info('Processing LoginRefresh POST')
         # Create the new access token
         current_user = get_jwt_identity()
-        print("found user in refresh:",current_user)
         access_token = create_access_token(identity=current_user, fresh=False)
         if not access_token:
             current_app.logger.error('Access token failed in LoginRefresh POST')
@@ -43,7 +42,6 @@ class LoginRefreshResource(Resource):
             return {'message': 'Account must be verified before login', 'error': 'true'}, 400
         user_id.related_role_id = user_membership.related_role_id
         login_user(user_id)
-        print("g's role is now",g.user.related_role_id)
         resp = jsonify({
                 'refresh': True,
                 'message': 'Login successful',
@@ -60,7 +58,6 @@ class LoginRefreshResource(Resource):
     #@jwt_refresh_token_required
     def delete(self):
         current_app.logger.info('Processing LoginRefresh DELETE')
-        print("logging out in Login.py")
         resp = jsonify({'logout': True})
         unset_jwt_cookies(resp)
         resp.status_code = 200
@@ -81,15 +78,13 @@ class LoginResource(Resource):
         if not json_data:
             current_app.logger.error('No input data given to Login POST')
             return {'message': 'No input data provided', 'error': 'true'}, 400
-        # Validate and deserialize input
-        print(json_data)
         #why do we set related_user_id? probably re-work this line
         json_data['related_user_id'] = 0
+        # Validate and deserialize input
         data, errors = login_schema.load(json_data)
         if errors:
             current_app.logger.error('Bad data given to Login POST')
             return errors, 422
-        print("received this user_name: ",data['user_name'])
         user_id = User.query.filter_by(user_name=data['user_name']).first()
 
         def checkBanList(key):
@@ -102,19 +97,13 @@ class LoginResource(Resource):
                 logStr = '!!!BAD VISITOR: Incrementing Blacklist for '+key
                 current_app.logger.info(logStr)
                 time_delay = 15 * (2**(count-3))
-                #print("ip: ",key,"datetime: ",datetime.datetime.utcnow()+datetime.timedelta(0,time_delay))
                 ip_ban_list.append((key,datetime.datetime.utcnow()+datetime.timedelta(0,time_delay)))
 
-        #ip = request.environ.get('REMOTE_ADDR')
         ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr) 
-        print("ID is",user_id)
         if user_id:
-            # print("ID is",user_id.id)
             login = Login.query.filter_by(related_user_id=user_id.id).first()
-            print("login is",login.password_hash,json_data['password_hash'])
             if login:
                 if check_password_hash(login.password_hash, json_data['password_hash']):
-                    print("found user in login: ",data);
                     access_token = create_access_token(identity=data['user_name'], fresh=True)
                     refresh_token = create_refresh_token(identity=data['user_name'])
                     # Set the JWTs and the CSRF double submit protection cookies
@@ -141,9 +130,7 @@ class LoginResource(Resource):
                     set_access_cookies(resp, access_token)
                     set_refresh_cookies(resp, refresh_token)
                     # clear the failed login counter
-                    print("trying to set this ip in memcached:",ip,flush=True)
                     client.set(ip, 0)
-                    #print("Called flask_jwt_extended!")
                     resp.status_code = 200
                     return resp
                 else:
