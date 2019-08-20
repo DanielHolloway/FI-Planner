@@ -143,9 +143,12 @@ To-do list:
     Mobile responsiveness - 8/14
     https://www.owasp.org/images/7/72/OWASP_Top_10-2017_%28en%29.pdf.pdf on 8/15
     Change background images based on page and blur them on 8/15
+    Test security and leave deployed on 8/15
 
     ### FEATURES ###
-    Test security and leave deployed
+    Fix bad scrolling on home and journal pages for mobile (maybe "fix the viewport"?) - prevent zooming!!!
+    Set up deployment pipeline for AWS (pulling from Github was bad) - https://scratchpad.blog/howto/how-to-use-codedeploy-with-aws-lightsail/
+    Replace the background images on mobile with normal backgrounds
     Add API error messages to React forms
     Metrics page
 
