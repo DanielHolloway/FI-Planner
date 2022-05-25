@@ -28,7 +28,7 @@ marshmallow==2.19.5
 marshmallow-sqlalchemy==0.16.4
 mccabe==0.6.1
 pycparser==2.19
-PyJWT==1.7.1
+PyJWT==2.4.0
 pylint==2.3.1
 pymemcache==2.1.1
 pyOpenSSL==19.0.0
